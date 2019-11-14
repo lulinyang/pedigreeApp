@@ -93,21 +93,21 @@ export default {
     this.reload();
   },
   mounted() {
-    this.$nextTick(() => {
-      if (!this.timer) {
-        this.timer = setInterval(() => {
-          if (
-            this.$refs.arcticeList &&
-            this.$refs.arcticeList.getPosition() &&
-            this.$refs.arcticeList.getPosition().top >= 178
-          ) {
-            this.isFixed = true;
-          } else {
-            this.isFixed = false;
-          }
-        }, 10);
-      }
-    });
+    // this.$nextTick(() => {
+    //   if (!this.timer) {
+    //     this.timer = setInterval(() => {
+    //       if (
+    //         this.$refs.arcticeList &&
+    //         this.$refs.arcticeList.getPosition() &&
+    //         this.$refs.arcticeList.getPosition().top >= 178
+    //       ) {
+    //         this.isFixed = true;
+    //       } else {
+    //         this.isFixed = false;
+    //       }
+    //     }, 10);
+    //   }
+    // });
   },
   destroyed() {
     clearInterval(this.timer);

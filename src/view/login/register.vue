@@ -4,6 +4,15 @@
       <img src="static/images/logo.png" width="150px" />
     </div>
     <div class="login-box">
+      <van-field v-model="form.name" clearable placeholder="请输入昵称" class="form-input">
+        <van-image
+          slot="left-icon"
+          width="1.3rem"
+          height="1.4rem"
+          fit="fit"
+          src="static/images/name_icon.png"
+        />
+      </van-field>
       <van-field v-model="form.username" clearable placeholder="请输入手机号" class="form-input">
         <van-image
           slot="left-icon"
@@ -105,7 +114,8 @@ export default {
         password: "",
         reg_pwd: "",
         code: "",
-        sex: "1"
+        sex: "1",
+        name: ""
       },
       second: 0
     };
@@ -115,7 +125,7 @@ export default {
       this.$router.push(page);
     },
     getCode() {
-      if(this.form.username === "") {
+      if (this.form.username === "") {
         this.$toast("手机号必填");
         return false;
       }
@@ -135,6 +145,10 @@ export default {
     },
     submit() {
       const form = this.form;
+      if (form.name === "") {
+        this.$toast("昵称不能为空");
+        return false;
+      }
       if (form.username === "") {
         this.$toast("用户名不能为空");
         return false;
@@ -192,7 +206,7 @@ export default {
   margin-top: 0.15rem;
 }
 .app-logo {
-  padding: 2rem 0;
+  padding: 1rem 0;
   text-align: center;
 }
 .footer-link {

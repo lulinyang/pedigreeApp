@@ -36,7 +36,14 @@ class AllServiceApi extends extendsApi {
   pushConversation(params) {
     return this.sendPost('/api/pushConversation', params);
   }
-  //
+  //话题列表
+  getConversationList(params) {
+    return this.sendPost('/api/getConversationList', params);
+  }
+  //得到用户信息
+  getUserById(params) {
+    return this.sendPost('/api/getUserById', params);
+  }
 
 }
 
