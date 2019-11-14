@@ -29,13 +29,18 @@
       </van-grid>
     </div>
     <van-cell-group style="margin-top: 1rem;">
-      <van-cell title="单元格" is-link value="内容" />
-      <van-cell title="单元格" is-link value="内容" />
-      <van-cell title="单元格" is-link value="内容" />
-      <van-cell title="单元格" is-link value="内容" />
-      <van-cell title="单元格" is-link value="内容" />
-      <van-cell title="单元格" is-link value="内容" />
+      <van-cell icon="photo-o" title="单元格" is-link value="内容" />
+      <van-cell icon="photo-o" title="单元格" is-link value="内容" />
+      <van-cell icon="photo-o" title="单元格" is-link value="内容" />
+      <van-cell icon="photo-o" title="单元格" is-link value="内容" />
     </van-cell-group>
+
+    <van-cell style="background-color: #f8f8f8;">
+      <template>
+        <van-button style="background-color: #f8f8f8;"  plain type="danger" round="" size="large" @click="logout">退出登录</van-button>
+      </template>
+    </van-cell>
+    
   </div>
 </template>
 
@@ -47,7 +52,12 @@ export default {
   created() {
     // console.log('this.$route.query', this.$route.query);
   },
-  methods: {}
+  methods: {
+    logout() {
+      this.$store.commit("logout", '');
+      this.$router.push('/login');
+    }
+  }
 };
 </script>
 

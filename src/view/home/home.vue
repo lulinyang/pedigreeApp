@@ -47,8 +47,7 @@ export default {
     };
   },
   mounted() {
-    // this.viewportHeight = document.documentElement.clientHeight - 46 - 50;
-    window.console.log("homeBox", document.documentElement.clientHeight);
+  
   }
 };
 </script>

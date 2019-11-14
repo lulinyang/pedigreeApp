@@ -1,7 +1,7 @@
 <template>
   <div class="homeBox2">
     <van-swipe-cell v-for="i in 65" :key="i">
-      <van-cell>
+      <van-cell @click="jumpPage(`/chat/${i}`, '最后一眼')">
         <template slot="icon">
           <van-image
             round
@@ -31,6 +31,24 @@
     </van-swipe-cell>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+
+    }
+  },
+  methods: {
+    jumpPage(page, title) {
+      if(title !== undefined) {
+        localStorage.setItem('otherTitle', title);
+      }
+      this.$router.push(page);
+    }
+  }
+}
+</script>
 
 <style scoped>
 .homeBox2 {

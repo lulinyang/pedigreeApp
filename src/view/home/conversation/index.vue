@@ -1,6 +1,13 @@
 <template>
   <div class="homeBox">
-    <EasyRefresh :userSelect="false" :onRefresh="onRefresh" :loadMore="loadMore">
+    <scroller
+      style="background-color: #f8f8f8;"
+      :on-refresh="refresh"
+      :on-infinite="infinite"
+      ref="arcticeList"
+      :refreshText="'下拉刷新'"
+      :noDataText="message"
+    >
       <div class="conversation">
         <van-cell :border="false" style="padding-bottom: 0;">
           <template slot="icon">
@@ -232,21 +239,31 @@
           </template>
         </van-cell>
       </div>
-    </EasyRefresh>
-    <!-- <div class="push"> -->
-      <img class="push" src="static/images/push_full.png" />
-    <!-- </div> -->
+    </scroller>
+
+    <img class="push" @click="jumpPage('/words')" src="static/images/push_full.png" />
   </div>
 </template>
 
 <script>
 export default {
   data() {
-    return {};
+    return {
+      message: "没有更多了"
+    };
   },
   methods: {
+    refresh() {
+     
+    },
+    infinite() {
+     
+    },
     onRefresh() {},
-    loadMore() {}
+    loadMore() {},
+    jumpPage(page) {
+      this.$router.push(page);
+    }
   }
 };
 </script>
@@ -292,7 +309,7 @@ export default {
   right: 10px;
   background-color: #fff;
   border-radius: 50%;
-   -moz-box-shadow: 1px 0px 15px #999;
+  -moz-box-shadow: 1px 0px 15px #999;
   -webkit-box-shadow: 1px 0px 15px #999;
   box-shadow: 1px 0px 15px #999;
   text-align: center;

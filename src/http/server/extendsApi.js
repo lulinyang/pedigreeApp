@@ -2,29 +2,30 @@ import api from './interApi'
 import qs from 'qs'
 
 class axiosApi {
-	constructor() {
+  constructor() {
 
-	}
+  }
 
-	sendGet(url, params = {}) { // get 请求
-		if (Object.prototype.toString.call(params) === '[object Object]') {
-      var param =  qs.stringify(params) !== '' ? '?' + qs.stringify(params) : qs.stringify(params);
-			return api.creatAxios.get(url + param)
-		} else {
-			const error = new Error('参数错误！')
-			// try {
-			// 	throw error
-			// } catch (e) {
+  sendGet(url, params = {}) { // get 请求
+    if (Object.prototype.toString.call(params) === '[object Object]') {
+      var param = qs.stringify(params) !== '' ? '?' + qs.stringify(params) : qs.stringify(params);
+      return api.creatAxios.get(url + param)
+    } else {
+      // const error = new Error('参数错误！')
+      // try {
+      // 	throw error
+      // } catch (e) {
       //   console.log(e);
-			// }
-		}
-	}
+      // }
+    }
+  }
 
-  sendPost (url, params = {}) { // post 请求
+  sendPost(url, params = {}) { // post 请求
     if (Object.prototype.toString.call(params) === '[object Object]') {
       return api.creatAxios.post(url, params)
     } else {
-      const error = new Error('参数错误！')
+      return api.creatAxios.post(url, params)
+      // const error = new Error('参数错误！')
       // try {
       //   throw error
       // } catch (e) {
@@ -39,7 +40,7 @@ class axiosApi {
    * @param {arr: [请求1,请求2...]}
    */
 
-  sendAll (arr) { // 并发请求
+  sendAll(arr) { // 并发请求
     return new Promise((resolve, reject) => {
       api.sendAll(arr).then(res => {
         resolve(res)
