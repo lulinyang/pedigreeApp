@@ -44,6 +44,42 @@ class AllServiceApi extends extendsApi {
   getUserById(params) {
     return this.sendPost('/api/getUserById', params);
   }
+  //修改密码
+  changePassword(params) {
+    return this.sendPost('/api/changePassword', params);
+  }
+  //根据ID获取文章
+  getArticleById(params) {
+    return this.sendPost('/api/getArticleById', params);
+  }
+  //族谱详情
+  getGenealogyById(params) {
+    return this.sendPost('/api/getGenealogyById', params);
+  }
+  //评论
+  saveComment(params) {
+    return this.sendPost('/api/saveComment', params);
+  }
+  //获取评论
+  getComment(params) {
+    return this.sendPost('/api/getComment', params);
+  }
+  //增加浏览数
+  addBrowseNum(params) {
+    return this.sendPost('/api/addBrowseNum', params);
+  }
+  //点赞
+  saveFabulous(params) {
+    return this.sendPost('/api/saveFabulous', params);
+  }
+  //收藏
+  saveCollection(params) {
+    return this.sendPost('/api/saveCollection', params);
+  }
+  //取消收藏
+  cancelCollection(params) {
+    return this.sendPost('/api/cancelCollection', params);
+  }
 
 }
 

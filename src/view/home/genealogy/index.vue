@@ -1,31 +1,32 @@
 <template>
-  <div class="homeBox">
-    <scroller
-      style="background-color: #f8f8f8;"
-      :on-refresh="refresh"
-      :on-infinite="infinite"
-      ref="list"
-      :refreshText="'下拉刷新'"
-      :noDataText="message"
-    >
-      <div class="genealogy-list" v-for="(item, index) in list" :key="index">
-        <van-cell>
-          <template slot="icon">
-            <van-image
-              width="4.5rem"
-              height="5.5rem"
-              src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190828/156696360816068825.jpg"
-            />
-          </template>
-          <template>
-            <p class="title">{{item.area_surname}}</p>
-            <p
-              class="describe van-multi-ellipsis--l3"
-            >{{item.describe}}</p>
-          </template>
-        </van-cell>
-      </div>
-    </scroller>
+  <div>
+    <van-search placeholder="请输入搜索关键词" v-model="keyword" />
+    <div class="list-box" :style="{height: viewportHeight + 'px'}">
+      <scroller
+        style="background-color: #f8f8f8;"
+        :on-refresh="refresh"
+        :on-infinite="infinite"
+        ref="list"
+        :refreshText="'下拉刷新'"
+        :noDataText="message"
+      >
+        <div class="genealogy-list" v-for="(item, index) in list" :key="index">
+          <van-cell @click="jumpPage(`/genealogy-details/${item.id}`, item.area_surname)">
+            <template slot="icon">
+              <van-image
+                width="4.5rem"
+                height="5.5rem"
+                src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190828/156696360816068825.jpg"
+              />
+            </template>
+            <template>
+              <p class="title">{{item.area_surname}}</p>
+              <p class="describe van-multi-ellipsis--l3">{{item.describe}}</p>
+            </template>
+          </van-cell>
+        </div>
+      </scroller>
+    </div>
   </div>
 </template>
 
@@ -40,13 +41,21 @@ export default {
         page: 1
       },
       list: [],
-      listIds: []
+      listIds: [],
+      keyword: "",
+      viewportHeight: document.documentElement.clientHeight - 108
     };
   },
   created() {
     this.getGenealogy();
   },
   methods: {
+    jumpPage(page, area_surname) {
+      if(area_surname) {
+        localStorage.setItem('navTitle',area_surname);
+      }
+      this.$router.push(page);
+    },
     refresh() {
       this.params.page = 1;
       this.getGenealogy(true);
@@ -85,6 +94,10 @@ export default {
 </script>
 
 <style scoped>
+.list-box {
+  /* margin-top: 50px; */
+  position: relative;
+}
 .title,
 .describe {
   padding: 0 0.5rem;

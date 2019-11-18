@@ -46,6 +46,16 @@ export default {
       viewportHeight: document.documentElement.clientHeight - 50
     };
   },
+  created() {
+    window.console.log(this.$route.name);
+    switch(this.$route.name) {
+      case 'home': this.active = 0;break;
+      case 'genealogy': this.active = 1;break;
+      case 'conversation': this.active = 2;break;
+      case 'message': this.active = 3;break;
+      case 'my': this.active = 4;break;
+    }
+  },
   mounted() {
   
   }

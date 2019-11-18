@@ -14,15 +14,15 @@
             <van-image
               v-if="item.sex*1 === 1"
               round
-              width="4rem"
-              height="4rem"
+              width="3rem"
+              height="3rem"
               src="static/images/default_man.png"
             />
             <van-image
               v-if="item.sex*1 === 0"
               round
-              width="4rem"
-              height="4rem"
+              width="3rem"
+              height="3rem"
               src="static/images/default_woman.png"
             />
           </template>
@@ -30,11 +30,20 @@
             <div class="userInfo">
               <p class="userInfo-p">
                 {{item.name}}
-                <img src="static/images/man.png" width="14px" v-if="item.sex*1 === 1"/>
-                <img src="static/images/woman.png" width="14px" v-if="item.sex*1 === 0"/>
+                <img src="static/images/man.png" width="12px" v-if="item.sex*1 === 1" />
+                <img src="static/images/woman.png" width="12px" v-if="item.sex*1 === 0" />
               </p>
               <p class="userInfo-p">
-                {{item.created_at}}
+                <!-- {{item.created_at}} -->
+                <van-count-down
+                  :time="item.timestamp"
+                  :auto-start="false"
+                >
+                  <template v-slot="timeData">
+                    <span class="item" v-if="timeData.hours > 0">{{ timeData.hours }} 小时前</span>
+                    <span class="item" v-else>{{ timeData.minutes }}分钟前</span>
+                  </template>
+                </van-count-down>
               </p>
             </div>
           </template>
@@ -120,6 +129,7 @@ export default {
       this.getConversationList();
     },
     getConversationList(isRefresh = false) {
+      // window.console.log('timestamp', timestamp);
       http.getConversationList(this.params).then(res => {
         const data = res.data.data;
         if (isRefresh) {
@@ -130,7 +140,15 @@ export default {
         data.data.forEach(item => {
           this.params.page = data.current_page + 1;
           if (this.listIds.indexOf(item.id) === -1) {
-            if (item.imgs) item.imgsUrl = item.imgs.split(",");
+            if (item.imgs) {
+              item.imgsUrl = item.imgs.split(",");
+            } else {
+              item.imgsUrl = [];
+            }
+            let timestamp = parseInt(new Date().getTime());
+            item.timestamp =
+              timestamp - parseInt(new Date(item.created_at).getTime());
+            window.console.log("timestamp", item.timestamp);
             this.list.push(item);
             this.listIds.push(item.id);
           }
@@ -155,20 +173,23 @@ export default {
 
 <style scoped>
 .userInfo {
-  padding: 0.7rem 0.5rem 0;
+  padding: 0.2rem 0.5rem 0;
 }
 .userInfo-p:nth-of-type(1) {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 .userInfo-p {
   line-height: 1.5rem;
 }
 .userInfo-p:nth-of-type(2) {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #999;
 }
+.content-box {
+  padding: 0 0.3rem;
+}
 .text {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
 }
 .conversation {
   margin-bottom: 0.5rem;
@@ -203,5 +224,9 @@ export default {
 <style>
 .conversation .van-grid-item__content {
   padding: 4px;
+}
+.conversation .van-count-down {
+  color: #999;
+  font-size: .8rem;
 }
 </style>

@@ -3,7 +3,6 @@
 import axios from 'axios'
 import config from '@/config/index'
 import { Toast } from 'vant';
-import VueCookies from 'vue-cookies'
 // 配置 axios，并生成实例
 const creatAxios = axios.create({
   baseURL: config.baseUrl,
@@ -13,11 +12,11 @@ const creatAxios = axios.create({
 // 拦截器配置
 creatAxios.interceptors.request.use(configData => { // 请求拦截 在发送请求之前做些什么
   if (configData.method == 'post') {
-    if (VueCookies.get('uid')) {
+    if (localStorage.getItem('uid')) {
       configData.data = {
         ...configData.data,
         apiKey: config.apiKey,
-        uid: VueCookies.get('uid')
+        uid: localStorage.getItem('uid')
       }
     } else {
       configData.data = {

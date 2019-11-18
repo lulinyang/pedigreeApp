@@ -4,11 +4,9 @@
       <img src="static/images/logo.png" width="150px" />
     </div>
     <div class="login-box">
-      <van-field v-model="form.name" clearable placeholder="昵称" class="form-input" />
-
       <van-field v-model="form.username" clearable placeholder="手机号" class="form-input" />
 
-      <van-field v-model="form.code" clearable placeholder="验证码" class="form-input">
+      <van-field v-model="form.code" clearable placeholder="短信验证码" class="form-input">
         <van-button
           slot="button"
           size="small"
@@ -21,7 +19,7 @@
         type="password"
         clearable
         v-model="form.password"
-        placeholder="密码"
+        placeholder="新密码"
         class="form-input"
       />
 
@@ -32,26 +30,10 @@
         placeholder="确认密码"
         class="form-input"
       />
-
-      <van-cell>
-        <template>
-          <van-radio-group v-model="form.sex">
-            <van-row>
-              <van-col span="10">
-                <van-radio name="1">男</van-radio>
-              </van-col>
-              <van-col span="10">
-                <van-radio name="0">女</van-radio>
-              </van-col>
-            </van-row>
-          </van-radio-group>
-        </template>
-      </van-cell>
-
-      <van-button round class="login-btn" type="info" size="large" @click="submit">立即注册</van-button>
+      <van-button round class="login-btn" type="info" size="large" @click="submit">提交</van-button>
       <div class="footer-link">
         <a href="javascript:;" @click="jumpPage('/home')">首页</a>
-        <a href="javascript:;" @click="jumpPage('/login')">我有账号，去登录</a>
+        <a href="javascript:;" @click="jumpPage('/login')">去登录</a>
       </div>
     </div>
   </div>
@@ -67,9 +49,7 @@ export default {
         username: "",
         password: "",
         reg_pwd: "",
-        code: "",
-        sex: "1",
-        name: ""
+        code: ""
       },
       second: 0
     };
@@ -98,41 +78,29 @@ export default {
       });
     },
     submit() {
-      const form = this.form;
-      if (form.name === "") {
-        this.$toast("昵称不能为空");
+      this.form.type = this.isCode ? 2 : 1;
+      if (this.form.username === "") {
+        this.$toast("手机必填");
         return false;
       }
-      if (form.username === "") {
-        this.$toast("用户名不能为空");
-        return false;
-      }
-
-      if (form.password === "") {
-        this.$toast("密码不能为空");
+      if (this.form.code === "") {
+        this.$toast("验证必填");
         return false;
       }
 
-      if (form.password.length < 6) {
-        this.$toast("密码最少6位字符");
+      if (this.form.password === "") {
+        this.$toast("新密码必填");
         return false;
       }
 
-      if (form.reg_pwd !== form.password) {
+      if (this.form.password !== this.form.reg_pwd) {
         this.$toast("两次密码不一致");
         return false;
       }
-
-      if (form.code === "") {
-        this.$toast("验证码不能为空");
-        return false;
-      }
-
-      http.register(form).then(res => {
-        this.$toast("注册成功");
-        this.$store.commit("setUid", res.data.data.id);
-        this.$store.commit('setUserInfo', res.data.data);
-        this.$router.push("/home");
+      http.changePassword(this.form).then(res => {
+        window.console.log('resss', res);
+        this.$toast("修改成功");
+        this.$router.push("/login");
       });
     }
   }

@@ -55,6 +55,30 @@ export default new Router({
 					component: resolve => require(['@/view/other/words/index.vue'], resolve),
 					meta: {title: '发布话题'}
 				},
+				{
+					path: '/article/:id(\\d+)',
+					name: 'article',
+					component: resolve => require(['@/view/other/article/index.vue'], resolve),
+					meta: {title: ''}
+				},
+				{
+					path: '/reply/:type(\\d+)/:theme_id(\\d+)/:pid(\\d+)',
+					name: 'reply',
+					component: resolve => require(['@/view/other/reply/index.vue'], resolve),
+					meta: {title: ''}
+				},
+				{
+					path: '/genealogy-details/:id(\\d+)',
+					name: 'genealogy-details',
+					component: resolve => require(['@/view/other/genealogy/index.vue'], resolve),
+					meta: {title: ''}
+				},
+				{
+					path: '/setting',
+					name: 'setting',
+					component: resolve => require(['@/view/other/setting/index.vue'], resolve),
+					meta: {title: ''}
+				},
 			]
 		},
 		{
@@ -66,6 +90,11 @@ export default new Router({
 			path: '/register',
 			name: 'register',
 			component: resolve => require(['@/view/login/register.vue'], resolve),
+		},
+		{
+			path: '/rest',
+			name: 'rest',
+			component: resolve => require(['@/view/login/rest.vue'], resolve),
 		},
 	]
 })

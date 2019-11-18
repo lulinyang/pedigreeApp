@@ -48,7 +48,7 @@
       </van-tabs>
 
       <div v-for="(item, index) in articles" :key="index">
-        <van-cell class="van-cell-article" :border="false" :center="true">
+        <van-cell class="van-cell-article" :border="false" :center="true" @click="jumpPage(`/article/${item.id}`, item.typename)">
           <template>
             <div class="article_title">#{{item.title}}#</div>
             <div class="article_describe">{{item.describe}}</div>
@@ -114,6 +114,12 @@ export default {
     this.timer = null;
   },
   methods: {
+    jumpPage(page, title) {
+      if(title) {
+        localStorage.setItem('navTitle',title);
+      }
+      this.$router.push(page);
+    },
     reload(isRefresh = false) {
       http.getColumn({}).then(res => {
         this.navTabs = res.data.data.data;

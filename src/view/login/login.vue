@@ -7,8 +7,8 @@
       <van-field v-model="form.username" clearable placeholder="请输入用户名" class="form-input">
         <van-image
           slot="left-icon"
-          width="1.3rem"
-          height="1.4rem"
+          width="1.2rem"
+          height="1.2rem"
           fit="fit"
           src="static/images/tel_icon.png"
         />
@@ -24,22 +24,34 @@
         <van-image
           slot="left-icon"
           width="1.2rem"
-          height="1.4rem"
+          height="1.2rem"
           fit="fit"
           src="static/images/pwd_icon.png"
         />
       </van-field>
 
-      <van-field v-model="form.code" clearable placeholder="请输入短信验证码" class="form-input" v-if="isCode">
+      <van-field
+        v-model="form.code"
+        clearable
+        placeholder="请输入短信验证码"
+        class="form-input"
+        v-if="isCode"
+      >
         <van-image
           slot="left-icon"
           width="1.2rem"
-          height="1.3rem"
+          height="1.2rem"
           fit="fit"
           src="static/images/code_icon.png"
           class="code-input"
         />
-        <van-button slot="button" size="small" type="primary">发送验证码</van-button>
+        <van-button
+          slot="button"
+          size="small"
+          type="primary"
+          @click="getCode"
+          :disabled="second > 0"
+        >{{second > 0 ? second + ' s' :'发送验证码'}}</van-button>
       </van-field>
 
       <van-button round class="login-btn" type="info" size="large" @click="login">登录</van-button>
@@ -52,7 +64,7 @@
         @click="loginType"
       >{{ isCode ? '密码登录': '验证码登录' }}</van-button>
       <div class="footer-link">
-        <a href="#">忘记密码</a>
+        <a href="javascript:;" @click="jumpPage('/rest')">忘记密码</a>
         <a href="javascript:;" @click="jumpPage('/register')">还没账号，我去注册</a>
       </div>
     </div>
@@ -70,7 +82,8 @@ export default {
         password: "",
         code: ""
       },
-      isCode: false
+      isCode: false,
+      second: 0
     };
   },
   methods: {
@@ -80,14 +93,34 @@ export default {
     jumpPage(page) {
       this.$router.push(page);
     },
+    getCode() {
+      if (this.form.username === "") {
+        this.$toast("手机号必填");
+        return false;
+      }
+      http.sendMsg({ tel: this.form.username }).then(res => {
+        if (res.data.code * 1 === 200) {
+          this.second = 120;
+          this.$toast("发送成功");
+          let timer = setInterval(() => {
+            if (this.second <= 0) {
+              clearInterval(timer);
+            } else {
+              this.second -= 1;
+            }
+          }, 1000);
+        }
+      });
+    },
     login() {
       this.form.type = this.isCode ? 2 : 1;
-      if(this.form.username === "") {
+      if (this.form.username === "") {
         this.$toast("用户名必填");
         return false;
       }
       http.login(this.form).then(res => {
         this.$store.commit("setUid", res.data.data.id);
+        this.$store.commit('setUserInfo', res.data.data);
         this.$router.push("/home");
       });
     }

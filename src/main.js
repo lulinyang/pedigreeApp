@@ -19,14 +19,16 @@ Vue.config.productionTip = false
 Vue.prototype.$axios = axios;
 Vue.prototype.$url = config.baseUrl;
 import store from '@/store/index'
-import VueCookies from 'vue-cookies'
-Vue.use(VueCookies)
+// import VueCookies from 'vue-cookies'
+// Vue.use(VueCookies)
 
 
 const noLogin = ['login', 'home', 'conversation', 'genealogy'];
 router.beforeEach((to, from, next) => {
-  window.console.log('from', from);
-  if(noLogin.indexOf(to.name) === -1 && !VueCookies.get('uid')) {
+  if (from.name != null) {
+    localStorage.setItem('routeName', from.name);
+  }
+  if(noLogin.indexOf(to.name) === -1 && !localStorage.getItem('uid')) {
     next('/login');
   }
   next();

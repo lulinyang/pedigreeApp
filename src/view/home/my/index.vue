@@ -1,14 +1,14 @@
 <template>
   <div class="homeBox">
     <div class="header-card-box">
-      <van-row>
+      <!-- <van-row>
         <van-col span="12">
-          <!-- <van-button type="primary" color="#74ACE6" round size="mini">签到</van-button> -->
+          <van-button type="primary" color="#74ACE6" round size="mini">签到</van-button>
         </van-col>
         <van-col span="12" style="text-align: right;">
           <van-icon name="setting-o" class="setting-icon" />
         </van-col>
-      </van-row>
+      </van-row> -->
       <div class="van-image-box">
         <van-image
           round
@@ -40,23 +40,14 @@
       </van-grid>
     </div>
     <van-cell-group style="margin-top: 1rem;">
-      <van-cell icon="photo-o" title="我的点赞" is-link  size="large"/>
-      <van-cell icon="photo-o" title="我的评论" is-link  size="large"/>
-      <van-cell icon="photo-o" title="我的私信" is-link  size="large"/>
+      <van-cell icon="static/images/collection_full.png" title="收藏" is-link  size="large"/>
+      <van-cell icon="static/images/fabulous_full.png" title="点赞" is-link  size="large"/>
+      <van-cell icon="static/images/message_full.png" title="评论" is-link  size="large"/>
+      <van-cell icon="static/images/zupu.png" title="族谱" is-link  size="large"/>
+      <van-cell icon="static/images/setting.png" to="/setting" title="设置" is-link  size="large"/>
     </van-cell-group>
 
-    <van-cell style="background-color: #f8f8f8;">
-      <template>
-        <van-button
-          style="background-color: #f8f8f8;"
-          plain
-          type="danger"
-          round
-          size="large"
-          @click="logout"
-        >退出登录</van-button>
-      </template>
-    </van-cell>
+    
   </div>
 </template>
 
@@ -87,7 +78,7 @@ export default {
 
 <style scoped>
 .header-card-box {
-  height: 11rem;
+  height: 9rem;
   background-image: linear-gradient(#1989fa, #1989fa);
   padding: 0.8rem;
 }
