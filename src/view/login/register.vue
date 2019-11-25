@@ -127,7 +127,6 @@ export default {
         this.$toast("验证码不能为空");
         return false;
       }
-
       http.register(form).then(res => {
         this.$toast("注册成功");
         this.$store.commit("setUid", res.data.data.id);

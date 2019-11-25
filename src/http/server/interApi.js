@@ -40,6 +40,24 @@ creatAxios.interceptors.response.use(response => { // 响应拦截 对响应数�
   }
   return response
 }, error => { // 响应失败做的事情
+  switch (error.response.status) {
+    case 500:
+      Toast('网络不给力！');
+      break;
+    case 403:
+      Toast('服务器理解请求客户端的请求，但是拒绝执行此请求！');
+      break;
+    case 405:
+      Toast('你账号已被禁用！');
+      localStorage.removeItem('uid');
+      break;
+    case 401:
+      Toast('没有权限！');
+      break;
+    case 408:
+      Toast('请求超时！');
+      break;
+  }
   return Promise.reject(error)
 })
 

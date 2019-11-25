@@ -1,74 +1,103 @@
 <template>
-  <div class="homeBox">
-    <van-tabs
-      class="fixedNav"
-      v-if="isFixed && navTabs.length > 0"
-      color="#1989FA"
-      title-active-color="#1989FA"
-      v-model="active"
-      @click="selectTabs"
-    >
-      <van-tab title="全部" :name="0"></van-tab>
-      <van-tab v-for="(item, index) in navTabs" :name="item.id" :title="item.name" :key="index"></van-tab>
-    </van-tabs>
-    <scroller
-      style="background-color: #f8f8f8;"
-      :on-refresh="refresh"
-      :on-infinite="infinite"
-      ref="arcticeList"
-      :refreshText="'下拉刷新'"
-      :noDataText="message"
-    >
-      <van-swipe :autoplay="3000" indicator-color="white" style="height: 12rem;">
-        <van-swipe-item>
-          <img
-            width="100%"
-            height="100%"
-            src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190726/156413350839204345.jpg"
-          />
-        </van-swipe-item>
-        <van-swipe-item>
-          <img
-            width="100%"
-            height="100%"
-            src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190726/156413350839204345.jpg"
-          />
-        </van-swipe-item>
-      </van-swipe>
-
-      <van-tabs
-        v-if="!isFixed && navTabs.length > 0"
-        color="#1989FA"
-        title-active-color="#1989FA"
-        v-model="active"
-        @click="selectTabs"
+  <div>
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        :finished-text="message"
+        @load="onLoad"
+        :offset="50"
+        :immediate-check="false"
       >
-        <van-tab title="全部" :name="0"></van-tab>
-        <van-tab :name="item.id" v-for="(item, index) in navTabs" :title="item.name" :key="index"></van-tab>
-      </van-tabs>
+        <van-swipe :autoplay="3000" indicator-color="white" style="height: 12rem;">
+          <van-swipe-item>
+            <img
+              width="100%"
+              height="100%"
+              src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190726/156413350839204345.jpg"
+            />
+          </van-swipe-item>
+          <van-swipe-item>
+            <img
+              width="100%"
+              height="100%"
+              src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190726/156413350839204345.jpg"
+            />
+          </van-swipe-item>
+        </van-swipe>
+        <van-grid :border="false">
+          <van-grid-item icon="photo-o" text="宗祠">
+            <template slot="icon">
+              <van-icon name="static/images/home_menu1.png" size="48" />
+            </template>
+          </van-grid-item>
+          <van-grid-item icon="photo-o" text="历史今日">
+            <template slot="icon">
+              <van-icon name="static/images/home_menu2.png" size="48" />
+            </template>
+          </van-grid-item>
+          <van-grid-item icon="photo-o" text="老黄历">
+            <template slot="icon">
+              <van-icon name="static/images/home_menu3.png" size="48" />
+            </template>
+          </van-grid-item>
+          <van-grid-item icon="photo-o" text="名人烈士">
+            <template slot="icon">
+              <van-icon name="static/images/home_menu4.png" size="48" />
+            </template>
+          </van-grid-item>
+        </van-grid>
+        <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o">
+          足协杯战线连续第2年上演广州德比战，上赛季半决赛上恒大以两回合5-3的总比分淘汰富力。
+        </van-notice-bar>
+        <van-sticky>
+          <van-tabs
+            v-if="!isFixed && navTabs.length > 0"
+            color="#1989FA"
+            title-active-color="#1989FA"
+            v-model="active"
+            @click="selectTabs"
+          >
+            <van-tab title="全部" :name="0"></van-tab>
+            <van-tab
+              :name="item.id"
+              v-for="(item, index) in navTabs"
+              :title="item.name"
+              :key="index"
+            ></van-tab>
+          </van-tabs>
+        </van-sticky>
 
-      <div v-for="(item, index) in articles" :key="index">
-        <van-cell class="van-cell-article" :border="false" :center="true" @click="jumpPage(`/article/${item.id}`, item.typename)">
-          <template>
-            <div class="article_title">#{{item.title}}#</div>
-            <div class="article_describe">{{item.describe}}</div>
-          </template>
-          <template slot="right-icon">
-            <van-image width="6.5rem" height="5rem" fit="fit" :src="$url + item.thumbnail" />
-          </template>
-        </van-cell>
-        <van-cell class="van-cell-label" :border="false">
-          <div slot="default" class="article_label">
-            <span>{{item.create_user_name}}</span>
-            <span>{{item.browse_num}}浏览</span>
-            <span>{{item.fabulous_num}}赞</span>
-          </div>
-          <div slot="right-icon" class="article_label">
-            <span>{{item.created_at.split(' ')[0]}}</span>
-          </div>
-        </van-cell>
-      </div>
-    </scroller>
+        <div v-for="(item, index) in articles" :key="index">
+          <van-cell
+            class="van-cell-article"
+            :border="false"
+            :center="true"
+            @click="jumpPage(`/article/${item.id}`, item.typename)"
+          >
+            <template>
+              <div class="article_title">#{{item.title}}#</div>
+              <div class="article_describe">{{item.describe}}</div>
+            </template>
+            <template slot="right-icon">
+              <van-image width="6.5rem" height="5rem" fit="fit" :src="$url + item.thumbnail" />
+            </template>
+          </van-cell>
+          <van-cell class="van-cell-label" :border="false">
+            <div slot="default" class="article_label">
+              <span>{{item.create_user_name}}</span>
+              <span>{{item.browse_num}}浏览</span>
+              <span>{{item.fabulous_num}}赞</span>
+              <span>{{item.comment_num}}评论</span>
+            </div>
+            <div slot="right-icon" class="article_label">
+              <span>{{item.created_at.split(' ')[0]}}</span>
+            </div>
+          </van-cell>
+        </div>
+        <van-divider>{{message}}</van-divider>
+      </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 <script>
@@ -76,47 +105,40 @@ import http from "@/http/server/api";
 export default {
   data() {
     return {
-      message: "没有更多了",
+      message: "",
       isFixed: false,
       active: 0,
       navTabs: [],
       params: {
         pageSize: 15,
-        page: 0
+        page: 1
       },
       articles: [],
       ArticleIds: [],
-      timer: null
+      loading: false,
+      finished: false,
+      viewportHeight: document.documentElement.clientHeight - 50,
+      isLoading: false
     };
   },
+  // watch() {},
   created() {
     this.reload();
   },
-  mounted() {
-    // this.$nextTick(() => {
-    //   if (!this.timer) {
-    //     this.timer = setInterval(() => {
-    //       if (
-    //         this.$refs.arcticeList &&
-    //         this.$refs.arcticeList.getPosition() &&
-    //         this.$refs.arcticeList.getPosition().top >= 178
-    //       ) {
-    //         this.isFixed = true;
-    //       } else {
-    //         this.isFixed = false;
-    //       }
-    //     }, 10);
-    //   }
-    // });
-  },
-  destroyed() {
-    clearInterval(this.timer);
-    this.timer = null;
-  },
+
   methods: {
+    onRefresh() {
+      this.reload();
+    },
+    onScroll() {
+      this.isFixed = this.$refs.homePage.scrollTop > 189 ? true : false;
+    },
+    onLoad() {
+      this.getArctice();
+    },
     jumpPage(page, title) {
-      if(title) {
-        localStorage.setItem('navTitle',title);
+      if (title) {
+        localStorage.setItem("navTitle", title);
       }
       this.$router.push(page);
     },
@@ -125,13 +147,6 @@ export default {
         this.navTabs = res.data.data.data;
       });
       this.getArctice(isRefresh);
-    },
-    refresh() {
-      this.params.page = 1;
-      this.reload(true);
-    },
-    infinite() {
-      this.getArctice();
     },
     selectTabs(id) {
       window.console.log("id", id);
@@ -147,7 +162,6 @@ export default {
       http.getArctice(this.params).then(res => {
         const data = res.data.data;
         if (isRefresh) {
-          this.$refs.arcticeList.finishPullToRefresh(true);
           this.articles = [];
           this.ArticleIds = [];
         }
@@ -158,14 +172,14 @@ export default {
             this.ArticleIds.push(item.id);
           }
         });
+        this.loading = false;
+        this.isLoading = false;
+        this.message = "";
         if (data.total == 0) {
           this.message = "暂无文章";
-          this.$refs.arcticeList.finishInfinite(true);
         } else if (data.current_page >= data.last_page && data.total > 0) {
           this.message = "没有更多了";
-          this.$refs.arcticeList.finishInfinite(true);
-        } else {
-          this.$refs.arcticeList.finishInfinite(false);
+          this.finished = true;
         }
       });
     }
@@ -174,6 +188,11 @@ export default {
 </script>
 
 <style scoped>
+.home-page {
+  /* padding-bottom: 50px; */
+  position: relative;
+  overflow-y: auto;
+}
 .fixedNav {
   position: fixed;
   top: 0;

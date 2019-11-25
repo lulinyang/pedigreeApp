@@ -7,6 +7,7 @@ import config from './config'
 import Vant from 'vant';
 import 'vant/lib/index.css';
 Vue.use(Vant);
+// Vue.use(ImagePreview);
 import VueScroller from "vue-scroller"
 Vue.use(VueScroller);
 

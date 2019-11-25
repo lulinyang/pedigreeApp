@@ -8,24 +8,22 @@
       :refreshText="'下拉刷新'"
       :noDataText="message"
     >
-      <div class="conversation" v-for="(item, index) in list" :key="index">
+      <div
+        class="conversation"
+        v-for="(item, index) in list"
+        :key="index"
+        @click="jumpPage(`/talk/${item.id}`)"
+      >
         <van-cell :border="false" style="padding-bottom: 0;">
-          <template slot="icon">
-            <van-image
-              v-if="item.sex*1 === 1"
-              round
-              width="3rem"
-              height="3rem"
-              src="static/images/default_man.png"
-            />
-            <van-image
-              v-if="item.sex*1 === 0"
-              round
-              width="3rem"
-              height="3rem"
-              src="static/images/default_woman.png"
-            />
-          </template>
+          <van-image
+            slot="icon"
+            round
+            width="3rem"
+            height="3rem"
+            :src="$url + item.headUrl"
+            @click.stop
+          />
+
           <template>
             <div class="userInfo">
               <p class="userInfo-p">
@@ -34,14 +32,21 @@
                 <img src="static/images/woman.png" width="12px" v-if="item.sex*1 === 0" />
               </p>
               <p class="userInfo-p">
-                <!-- {{item.created_at}} -->
-                <van-count-down
-                  :time="item.timestamp"
-                  :auto-start="false"
-                >
+                <van-count-down :time="item.timestamp" :auto-start="false">
                   <template v-slot="timeData">
-                    <span class="item" v-if="timeData.hours > 0">{{ timeData.hours }} 小时前</span>
-                    <span class="item" v-else>{{ timeData.minutes }}分钟前</span>
+                    <span class="item" v-if="timeData.days > 0">{{ timeData.days}}天前</span>
+                    <span
+                      class="item"
+                      v-if="timeData.hours > 0 && timeData.days <= 0"
+                    >{{ timeData.hours }}小时前</span>
+                    <span
+                      class="item"
+                      v-if="timeData.days <= 0 && timeData.hours <= 0 && timeData.minutes > 0"
+                    >{{ timeData.minutes }}分钟前</span>
+                    <span
+                      class="item"
+                      v-if="timeData.hours <= 0 && timeData.hours <= 0 && timeData.minutes <= 0"
+                    >刚刚</span>
                   </template>
                 </van-count-down>
               </p>
@@ -60,7 +65,12 @@
               v-if="item.imgsUrl.length > 4 || item.imgsUrl.length === 3"
             >
               <van-grid-item v-for="(v, k) in item.imgsUrl" :key="k">
-                <van-image width="100%" height="100%" :src="$url + v" />
+                <van-image
+                  width="100%"
+                  height="100%"
+                  :src="$url + v"
+                  @click.stop="imagePreview(item.imgsUrl)"
+                />
               </van-grid-item>
             </van-grid>
 
@@ -71,13 +81,23 @@
               v-if="item.imgsUrl.length === 4 || item.imgsUrl.length === 2"
             >
               <van-grid-item v-for="(v, k) in item.imgsUrl" :key="k">
-                <van-image width="100%" height="100%" :src="$url + v" />
+                <van-image
+                  width="100%"
+                  height="100%"
+                  :src="$url + v"
+                  @click.stop="imagePreview(item.imgsUrl)"
+                />
               </van-grid-item>
             </van-grid>
 
             <van-grid :border="false" :column-num="1" v-if="item.imgsUrl.length === 1">
               <van-grid-item v-for="(v, k) in item.imgsUrl" :key="k">
-                <van-image width="100%" height="100%" :src="$url + v" />
+                <van-image
+                  width="100%"
+                  height="100%"
+                  :src="$url + v"
+                  @click.stop="imagePreview(item.imgsUrl)"
+                />
               </van-grid-item>
             </van-grid>
           </template>
@@ -87,11 +107,11 @@
             <van-row>
               <van-col span="12" class="operation">
                 <van-icon name="chat-o" class="i" />
-                <span>8</span>
+                <span>{{item.comment_num}}</span>
               </van-col>
               <van-col span="12" class="operation">
                 <van-icon name="good-job-o" class="i" />
-                <span>8</span>
+                <span>{{item.fabulous_num}}</span>
               </van-col>
             </van-row>
           </template>
@@ -105,6 +125,10 @@
 
 <script>
 import http from "@/http/server/api";
+import Vue from "vue";
+import { ImagePreview } from "vant";
+
+Vue.use(ImagePreview);
 export default {
   data() {
     return {
@@ -121,6 +145,12 @@ export default {
     this.getConversationList();
   },
   methods: {
+    imagePreview(imgs) {
+      let imgsArray = imgs.map(item => {
+        return this.$url + item;
+      });
+      ImagePreview(imgsArray);
+    },
     refresh() {
       this.params.page = 1;
       this.getConversationList(true);
@@ -154,7 +184,7 @@ export default {
           }
         });
         if (data.total == 0) {
-          this.message = "暂无文章";
+          this.message = "暂无话题";
           this.$refs.list.finishInfinite(true);
         } else if (data.current_page >= data.last_page && data.total > 0) {
           this.message = "没有更多了";
@@ -166,6 +196,19 @@ export default {
     },
     jumpPage(page) {
       this.$router.push(page);
+    },
+    //点赞
+    fabulous(type, item) {
+      const params = {
+        type: type,
+        theme_id: item.id
+      };
+      http.saveFabulous(params).then(res => {
+        this.$toast("点赞成功！");
+        window.console.log("res", res);
+        item.isFabulous = true;
+        item.fabulous_num = item.fabulous_num * 1 + 1;
+      });
     }
   }
 };
@@ -227,6 +270,6 @@ export default {
 }
 .conversation .van-count-down {
   color: #999;
-  font-size: .8rem;
+  font-size: 0.8rem;
 }
 </style>

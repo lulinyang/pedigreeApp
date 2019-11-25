@@ -1,67 +1,10 @@
 <template>
   <div class="reply" ref="reply" :style="{height: viewportHeight + 'px'}">
-    <van-cell-group>
-      <div>
-        <van-cell :center="true" :border="false">
-          <van-image
-              slot="icon"
-              round
-              width="3rem"
-              height="3rem"
-              :src="$url + Landlord.headUrl"
-              @click.stop
-            />
-          <template>
-            <span style="margin:0 10px 0 10px;font-size:.9rem;">{{Landlord.name}}</span>
-            <van-icon size="12" name="static/images/man.png" />
-            <p class="time-text">
-              <van-count-down :time="Landlord.timestamp" :auto-start="false">
-                <template v-slot="timeData">
-                  <span class="item" v-if="timeData.hours > 0">{{ timeData.hours }}小时前</span>
-                  <span class="item" v-else>{{ timeData.minutes }}分钟前</span>
-                </template>
-              </van-count-down>
-            </p>
-          </template>
-          <van-icon
-            slot="right-icon"
-            size="18"
-            name="static/images/del.png"
-            v-if="$store.getters.uid*1 === Landlord.uid*1"
-          />
-        </van-cell>
-        <div class="content">{{Landlord.content}}</div>
-        <div class="opt opt-top">
-          <van-row class="opt-item opt-item-top">
-            <van-col span="12" style="text-align: left;">
-              <van-tag round size="medium">楼主</van-tag>
-            </van-col>
-            <van-col span="12">
-              <span class="fa_msg">{{Landlord.fabulous_num}}</span>
-              <van-icon
-                size="18"
-                name="static/images/fabulous.png"
-                @click="fabulous(4, Landlord)"
-                v-if="!Landlord.isFabulous"
-              />
-              <van-icon size="18" name="static/images/fabulous_full.png" v-else />
-            </van-col>
-          </van-row>
-        </div>
-      </div>
-    </van-cell-group>
     <div ref="comment">
-      <van-cell-group title="热门评论" :border="false">
+      <van-cell-group title="热门评论" :border="false" v-if="comment.length > 0">
         <div v-for="(item, index) in comment" :key="index">
           <van-cell :center="true" :border="false">
-            <van-image
-              slot="icon"
-              round
-              width="3rem"
-              height="3rem"
-              :src="$url + item.headUrl"
-              @click.stop
-            />
+            <van-icon slot="icon" size="45" name="static/images/default_man.png" />
             <template>
               <span style="margin:0 10px 0 10px;font-size:.9rem;">{{item.name}}</span>
               <van-icon size="12" name="static/images/man.png" />
@@ -78,7 +21,6 @@
               slot="right-icon"
               size="18"
               name="static/images/del.png"
-              v-if="$store.getters.uid*1 === Landlord.uid*1"
             />
           </van-cell>
           <div class="content" @click="replyWho(item)">{{item.content}}</div>
@@ -89,7 +31,7 @@
                   round
                   size="medium"
                   v-if="item.children.length > 0"
-                  @click="jumpPage(`/reply/1/${item.theme_id}/${item.id}`)"
+                  @click="jumpPage(`/reply/2/${item.theme_id}/${item.id}`)"
                 >{{item.children.length}}回复</van-tag>
               </van-col>
               <van-col span="12">
@@ -101,17 +43,13 @@
                   v-if="!item.isFabulous"
                 />
                 <van-icon size="18" name="static/images/fabulous_full.png" v-else />
-                <van-icon
-                  class="right-icon"
-                  size="18"
-                  name="static/images/msg.png"
-                  @click="replyWho(item)"
-                />
+                <van-icon class="right-icon" size="18" name="static/images/msg.png" />
               </van-col>
             </van-row>
           </div>
         </div>
       </van-cell-group>
+      <div v-else class="kong">还有评论</div>
     </div>
     <div class="footer">
       <van-field>
@@ -135,7 +73,6 @@ import http from "@/http/server/api";
 export default {
   data() {
     return {
-      Landlord: {},
       comment: [],
       placeholder: "我也来说两句",
       content: "",
@@ -147,7 +84,11 @@ export default {
   created() {
     window.console.log("this.$route.params", this.$route.params);
     this.pid = this.$route.params.pid;
-    this.getComment(this.$route.params);
+    const params = {
+      type: 2,
+      theme_id: this.$route.params.id,
+    }
+    this.getComment(params);
   },
   methods: {
     jumpPage(page) {
@@ -160,16 +101,13 @@ export default {
       this.$refs.contentInpt.focus();
       this.pid = item.id * 1;
       this.item = item;
-      window.console.log("params", this.pid);
+      window.console.log("params", item);
     },
     getComment(params) {
       http.getComment(params).then(res => {
         window.console.log("sss", res);
-        this.Landlord = res.data.data[0];
-        let timestamp = parseInt(new Date().getTime());
-        this.Landlord.timestamp =
-          timestamp - parseInt(new Date(this.Landlord.created_at).getTime());
-        this.comment = res.data.data[0].children.map(item => {
+        let timestamp = 0;
+        this.comment = res.data.data.map(item => {
           timestamp = parseInt(new Date().getTime());
           item.timestamp =
             timestamp - parseInt(new Date(item.created_at).getTime());
@@ -179,10 +117,10 @@ export default {
     },
     submit() {
       const params = {
-        type: this.$route.params.type,
-        theme_id: this.$route.params.theme_id,
-        pid: this.pid,
-        content: this.content
+        type: 2,
+        theme_id: this.$route.params.id,
+        content: this.content,
+         pid: this.pid
       };
       if (params.content === "") {
         this.$toast("回复内容不能为空！");
@@ -232,7 +170,7 @@ export default {
 <style scoped>
 .reply {
   padding-bottom: 1rem;
-  background-color: #fff;
+  background-color: #f8f8f8;
   height: 100%;
   overflow-y: auto;
 }
@@ -288,11 +226,10 @@ export default {
   border: 0;
   background-color: #f8f8f8;
 }
-.opt-top {
-  padding-bottom: 0;
-}
-.opt-item-top {
-  border: 0;
+.kong {
+  text-align: center;
+  color: #999;
+  line-height: 50px;
 }
 </style>
 

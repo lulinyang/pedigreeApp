@@ -64,9 +64,9 @@ class AllServiceApi extends extendsApi {
   getComment(params) {
     return this.sendPost('/api/getComment', params);
   }
-  //增加浏览数
-  addBrowseNum(params) {
-    return this.sendPost('/api/addBrowseNum', params);
+  //记录文章浏览数
+  addBrowseNumArctice(params) {
+    return this.sendPost('/api/addBrowseNumArctice', params);
   }
   //点赞
   saveFabulous(params) {
@@ -79,6 +79,18 @@ class AllServiceApi extends extendsApi {
   //取消收藏
   cancelCollection(params) {
     return this.sendPost('/api/cancelCollection', params);
+  }
+  //记录话题浏览量
+  addBrowseNumConversation(params) {
+    return this.sendPost('/api/addBrowseNumConversation', params);
+  }
+  //话题详情
+  getConversationById(params) {
+    return this.sendPost('/api/getConversationById', params);
+  }
+  //编辑用户信息
+  editUserInfo(params) {
+    return this.sendPost('/api/editUserInfo', params);
   }
 
 }

@@ -68,6 +68,12 @@ export default new Router({
 					meta: {title: ''}
 				},
 				{
+					path: '/genealogy-comment/:id(\\d+)',
+					name: 'genealogy-comment',
+					component: resolve => require(['@/view/other/genealogy/comment.vue'], resolve),
+					meta: {title: ''}
+				},
+				{
 					path: '/genealogy-details/:id(\\d+)',
 					name: 'genealogy-details',
 					component: resolve => require(['@/view/other/genealogy/index.vue'], resolve),
@@ -77,7 +83,19 @@ export default new Router({
 					path: '/setting',
 					name: 'setting',
 					component: resolve => require(['@/view/other/setting/index.vue'], resolve),
-					meta: {title: ''}
+					meta: {title: '设置'}
+				},
+				{
+					path: '/edit-user',
+					name: 'edit-user',
+					component: resolve => require(['@/view/other/setting/edit-user.vue'], resolve),
+					meta: {title: '编辑资料'}
+				},
+				{
+					path: '/talk/:id(\\d+)',
+					name: 'talk',
+					component: resolve => require(['@/view/other/talk/index.vue'], resolve),
+					meta: {title: '话题详情'}
 				},
 			]
 		},

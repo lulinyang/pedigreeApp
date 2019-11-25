@@ -14,7 +14,7 @@
           round
           width="4.5rem"
           height="4.5rem"
-          :src="$store.getters.headUrl"
+          :src="$url + $store.getters.headUrl"
         />
       </div>
     </div>
@@ -64,7 +64,7 @@ export default {
   methods: {
     getUserById() {
       http.getUserById({}).then(res => {
-        window.console.log('sss', res);
+        // window.console.log('sss', res);
         this.$store.commit('setUserInfo', res.data.data);
       });
     },

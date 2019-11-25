@@ -1,4 +1,4 @@
-import config from '@/config/index'
+// import config from '@/config/index'
 const user = {
 	getters: {
 		uid: state => {
@@ -34,25 +34,14 @@ const user = {
 			localStorage.removeItem('uid');
 		},
 		setUserInfo: (state, param) => {
-			window.console.log('state, param', state, param);
 			state.username = param.username;
 			localStorage.setItem('username', param.username);
 			state.name = param.name;
 			localStorage.setItem('name', param.name);
 			state.sex = param.sex;
 			localStorage.setItem('sex', param.sex);
-			if (param.headUrl) {
-				state.headUrl = config.baseUrl + param.headUrl;
-				localStorage.setItem('headUrl', config.baseUrl + param.headUrl);
-			} else {
-				if (param.sex * 1 === 0) {
-					state.headUrl = 'static/images/default_woman.png';
-					localStorage.setItem('headUrl', 'static/images/default_woman.png');
-				} else if (param.sex * 1 === 1) {
-					state.headUrl = 'static/images/default_man.png';
-					localStorage.setItem('headUrl', 'static/images/default_man.png');
-				}
-			}
+			state.headUrl = param.headUrl;
+			localStorage.setItem('headUrl', param.headUrl);
 		},
 	},
 

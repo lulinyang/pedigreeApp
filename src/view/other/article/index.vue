@@ -24,8 +24,20 @@
             <img slot="icon" src="static/images/fabulous_full.png" width="30px" v-else />
           </van-grid-item>
           <van-grid-item :text="data.collection_num + '收藏'">
-            <img slot="icon" src="static/images/collection.png" width="30px" @click="saveCollection(1, data)" v-if="!data.isCollection"/>
-            <img slot="icon" src="static/images/collection_full.png" width="30px" v-else @click="cancelCollection(1, data)"/>
+            <img
+              slot="icon"
+              src="static/images/collection.png"
+              width="30px"
+              @click="saveCollection(1, data)"
+              v-if="!data.isCollection"
+            />
+            <img
+              slot="icon"
+              src="static/images/collection_full.png"
+              width="30px"
+              v-else
+              @click="cancelCollection(1, data)"
+            />
           </van-grid-item>
 
           <van-grid-item text="分享">
@@ -38,7 +50,15 @@
       <van-cell-group title="热门评论" :border="false" v-if="comment.length > 0">
         <div v-for="(item, index) in comment" :key="index">
           <van-cell :center="true" :border="false">
-            <van-icon slot="icon" size="45" name="static/images/default_man.png" />
+            <van-image
+              slot="icon"
+              round
+              width="3rem"
+              height="3rem"
+              :src="$url + item.headUrl"
+              @click.stop
+            />
+
             <template>
               <span style="margin:0 10px 0 10px;font-size:.9rem;">{{item.name}}</span>
               <van-icon size="12" name="static/images/man.png" />
@@ -70,9 +90,14 @@
                 >{{item.children.length}}回复</van-tag>
               </van-col>
               <van-col span="12">
-                <span class="fa_msg">{{item.fabulous_num}} </span>
-                <van-icon size="18" name="static/images/fabulous.png" @click="fabulous(4, item)" v-if="!item.isFabulous" />
-                <van-icon size="18" name="static/images/fabulous_full.png" v-else/>
+                <span class="fa_msg">{{item.fabulous_num}}</span>
+                <van-icon
+                  size="18"
+                  name="static/images/fabulous.png"
+                  @click="fabulous(4, item)"
+                  v-if="!item.isFabulous"
+                />
+                <van-icon size="18" name="static/images/fabulous_full.png" v-else />
                 <van-icon
                   class="right-icon"
                   size="18"
@@ -123,7 +148,7 @@ export default {
   created() {
     this.getArticleById(this.$route.params.id);
     this.getComment(this.$route.params.id);
-    http.addBrowseNum({ id: this.$route.params.id });
+    http.addBrowseNumArctice({ id: this.$route.params.id });
   },
   methods: {
     replyWho(item) {
@@ -180,11 +205,14 @@ export default {
           uid: this.$store.getters.uid,
           username: this.$store.getters.username,
           content: this.content,
-          children: []
+          children: [],
+          isFabulous: false,
+          fabulous_num: 0,
         };
+        window.console.log('sdata', data);
         if (this.pid === 0) {
           this.comment.unshift(data);
-          this.$refs.article.scrollTop = this.$refs.comment.offsetTop - 250;
+          this.$refs.article.scrollTop = this.$refs.comment.offsetTop - 300;
         } else {
           this.item.children.push(data);
         }
@@ -198,13 +226,13 @@ export default {
     fabulous(type, item) {
       const params = {
         type: type,
-        theme_id: item.id
+        theme_id: this.data.id
       };
       http.saveFabulous(params).then(res => {
         this.$toast("点赞成功！");
         window.console.log("res", res);
         item.isFabulous = true;
-        item.fabulous_num = item.fabulous_num*1 + 1;
+        item.fabulous_num = item.fabulous_num * 1 + 1;
       });
     },
     saveCollection(type, item) {
@@ -216,7 +244,7 @@ export default {
         this.$toast("收藏成功！");
         window.console.log("res", res);
         item.isCollection = true;
-        item.collection_num = item.collection_num*1 + 1;
+        item.collection_num = item.collection_num * 1 + 1;
       });
     },
     cancelCollection(type, item) {
@@ -228,9 +256,9 @@ export default {
         this.$toast(res.data.stateMsg);
         window.console.log("res", res);
         item.isCollection = false;
-        item.collection_num = item.collection_num*1 - 1;
+        item.collection_num = item.collection_num * 1 - 1;
       });
-    },
+    }
   }
 };
 </script>
@@ -287,10 +315,9 @@ export default {
   background-color: #f8f8f8;
 }
 .fa_msg {
-  vertical-align: top;
+  /* vertical-align: top; */
   margin-right: 0.2rem;
   color: #999;
-  /* font-size: .8rem; */
 }
 </style>
 <style>
