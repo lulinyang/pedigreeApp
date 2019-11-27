@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="index-grid">
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
       <van-list
         v-model="loading"
@@ -9,6 +9,15 @@
         :offset="50"
         :immediate-check="false"
       >
+        <van-cell class="weather" :center="true" :border="false">
+          <span slot="icon" class="centigrade">{{weather.tem}}</span>
+          <span slot="title">{{weather.week}}</span>
+          <van-tag slot="label" type="warning">{{weather.wea}}</van-tag>
+          <span slot="right-icon" class="right-icon">
+            <van-icon name="static/images/local.png" color="#FF976A" size="20" />
+            <span class="city_name">{{weather.city_name}}</span>
+          </span>
+        </van-cell>
         <van-swipe :autoplay="3000" indicator-color="white" style="height: 12rem;">
           <van-swipe-item>
             <img
@@ -47,12 +56,13 @@
             </template>
           </van-grid-item>
         </van-grid>
-        <van-notice-bar color="#1989fa" background="#ecf9ff" left-icon="info-o">
-          足协杯战线连续第2年上演广州德比战，上赛季半决赛上恒大以两回合5-3的总比分淘汰富力。
-        </van-notice-bar>
+        <van-notice-bar
+          color="#1989fa"
+          background="#ecf9ff"
+          left-icon="volume-o"
+        >足协杯战线连续第2年上演广州德比战，上赛季半决赛上恒大以两回合5-3的总比分淘汰富力。</van-notice-bar>
         <van-sticky>
           <van-tabs
-            v-if="!isFixed && navTabs.length > 0"
             color="#1989FA"
             title-active-color="#1989FA"
             v-model="active"
@@ -95,7 +105,6 @@
             </div>
           </van-cell>
         </div>
-        <van-divider>{{message}}</van-divider>
       </van-list>
     </van-pull-refresh>
   </div>
@@ -106,7 +115,6 @@ export default {
   data() {
     return {
       message: "",
-      isFixed: false,
       active: 0,
       navTabs: [],
       params: {
@@ -118,20 +126,50 @@ export default {
       loading: false,
       finished: false,
       viewportHeight: document.documentElement.clientHeight - 50,
-      isLoading: false
+      isLoading: false,
+      weather: {}
     };
   },
   // watch() {},
   created() {
     this.reload();
+    this.geolocation();
   },
 
   methods: {
+    myFun(result){
+      console.log('result-lat', result.center.lat);
+      console.log('result-lng', result.center.lng);
+      http.setPosition(result.center).then(res => {
+        this.weather = res.data.data;
+        console.log('reesss', res);
+      })
+    },
+    geolocation() {
+        var myCity = new BMap.LocalCity();
+        myCity.get(this.myFun); 
+        // AMap.plugin("AMap.Geolocation", function() {
+        //   var geolocation = new AMap.Geolocation({});
+        //   geolocation.getCurrentPosition();
+        //   AMap.event.addListener(geolocation, "complete", onComplete);
+        //   AMap.event.addListener(geolocation, "error", onError);
+
+        //   function onComplete(data) {
+        //     // data是具体的定位信息
+        //     window.console.log("data=>", data, data.addressComponent.district);
+        //     alert(data.addressComponent.district);
+        //   }
+
+        //   function onError(data) {
+        //     // 定位出错
+        //     window.console.log("error=>", data);
+        //     alert(data.status);
+        //   }
+        // });
+      
+    },
     onRefresh() {
       this.reload();
-    },
-    onScroll() {
-      this.isFixed = this.$refs.homePage.scrollTop > 189 ? true : false;
     },
     onLoad() {
       this.getArctice();
@@ -162,6 +200,7 @@ export default {
       http.getArctice(this.params).then(res => {
         const data = res.data.data;
         if (isRefresh) {
+          this.finished = false;
           this.articles = [];
           this.ArticleIds = [];
         }
@@ -177,6 +216,7 @@ export default {
         this.message = "";
         if (data.total == 0) {
           this.message = "暂无文章";
+          this.finished = true;
         } else if (data.current_page >= data.last_page && data.total > 0) {
           this.message = "没有更多了";
           this.finished = true;
@@ -188,6 +228,28 @@ export default {
 </script>
 
 <style scoped>
+.index-grid {
+  padding-bottom: 50px;
+}
+.weather {
+  padding-left: 0;
+  padding-right: 0;
+  background-color: rgba(25, 137, 250, 0.8);
+  color: #fff;
+}
+.centigrade {
+  line-height: 45px;
+  font-size: 1.2rem;
+  padding: 0 0.5rem;
+}
+.right-icon {
+  padding: 0 0.5rem;
+}
+.city_name {
+  vertical-align: top;
+  padding: 0.1rem;
+  font-size: 1rem;
+}
 .home-page {
   /* padding-bottom: 50px; */
   position: relative;

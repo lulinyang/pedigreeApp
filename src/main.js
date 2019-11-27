@@ -3,7 +3,7 @@ import router from './router'
 import axios from 'axios'
 import App from './App.vue'
 import config from './config'
-
+import store from '@/store/index'
 import Vant from 'vant';
 import 'vant/lib/index.css';
 Vue.use(Vant);
@@ -11,20 +11,19 @@ Vue.use(Vant);
 import VueScroller from "vue-scroller"
 Vue.use(VueScroller);
 
-// import EasyRefresh from 'vue-easyrefresh'
-// Vue.use(EasyRefresh)
+// import BaiduMap from 'vue-baidu-map'
+
+// Vue.use(BaiduMap, {
+//   ak: config.BaiduMapAk
+// })
 
 Vue.config.productionTip = false
 
-
 Vue.prototype.$axios = axios;
 Vue.prototype.$url = config.baseUrl;
-import store from '@/store/index'
-// import VueCookies from 'vue-cookies'
-// Vue.use(VueCookies)
 
 
-const noLogin = ['login', 'home', 'conversation', 'genealogy'];
+const noLogin = ['login', 'home', 'conversation', 'genealogy', 'article'];
 router.beforeEach((to, from, next) => {
   if (from.name != null) {
     localStorage.setItem('routeName', from.name);

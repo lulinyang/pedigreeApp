@@ -92,6 +92,10 @@ class AllServiceApi extends extendsApi {
   editUserInfo(params) {
     return this.sendPost('/api/editUserInfo', params);
   }
+  //setPosition
+  setPosition(params) {
+    return this.sendPost('/api/setPosition', params);
+  }
 
 }
 
