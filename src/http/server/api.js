@@ -92,11 +92,26 @@ class AllServiceApi extends extendsApi {
   editUserInfo(params) {
     return this.sendPost('/api/editUserInfo', params);
   }
-  //setPosition
+  //设置用户经纬度并得到地址和天气
   setPosition(params) {
     return this.sendPost('/api/setPosition', params);
   }
-
+  //获取首页轮播图
+  getBanner(params) {
+    return this.sendPost('/api/getBanner', params);
+  }
+  //获取首页菜单
+  getMenu(params) {
+    return this.sendPost('/api/getMenu', params);
+  }
+  //获取历史上的今天
+  getHistoryToday(params) {
+    return this.sendPost('/api/getHistoryToday', params);
+  }
+  //得到黄历
+  getHuangLi(params) {
+    return this.sendPost('/api/getHuangLi', params);
+  }
 }
 
-export default new AllServiceApi()
+export default new AllServiceApi();

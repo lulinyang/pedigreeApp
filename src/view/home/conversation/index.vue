@@ -1,5 +1,11 @@
 <template>
-  <div class="homeBox">
+  <div class="homeBox" >
+    <div class="select-menu">
+      <van-dropdown-menu>
+        <van-dropdown-item v-model="value1" :options="option1" />
+      </van-dropdown-menu>
+    </div>
+    <div class="homeBoxScroller" :style="{height: viewportHeight + 'px'}">
     <scroller
       style="background-color: #f8f8f8;"
       :on-refresh="refresh"
@@ -10,7 +16,7 @@
     >
       <div
         class="conversation"
-        v-for="(item, index) in list"
+        v-for="(item, index) in $store.getters.conversation"
         :key="index"
         @click="jumpPage(`/talk/${item.id}`)"
       >
@@ -118,7 +124,7 @@
         </van-cell>
       </div>
     </scroller>
-
+    </div>
     <img class="push" @click="jumpPage('/words')" src="static/images/push_full.png" />
   </div>
 </template>
@@ -138,7 +144,14 @@ export default {
         page: 1
       },
       list: [],
-      listIds: []
+      listIds: [],
+      value1: 0,
+      option1: [
+        { text: '最新', value: 0 },
+        { text: '推荐', value: 1 },
+        { text: '关注', value: 2 }
+      ],
+      viewportHeight: document.documentElement.clientHeight - 100
     };
   },
   created() {
@@ -159,7 +172,6 @@ export default {
       this.getConversationList();
     },
     getConversationList(isRefresh = false) {
-      // window.console.log('timestamp', timestamp);
       http.getConversationList(this.params).then(res => {
         const data = res.data.data;
         if (isRefresh) {
@@ -178,7 +190,6 @@ export default {
             let timestamp = parseInt(new Date().getTime());
             item.timestamp =
               timestamp - parseInt(new Date(item.created_at).getTime());
-            window.console.log("timestamp", item.timestamp);
             this.list.push(item);
             this.listIds.push(item.id);
           }
@@ -192,6 +203,8 @@ export default {
         } else {
           this.$refs.list.finishInfinite(false);
         }
+        this.$store.commit("setConversation", this.list);
+        // console.log(this.$store.getters.conversation);
       });
     },
     jumpPage(page) {
@@ -215,6 +228,10 @@ export default {
 </script>
 
 <style scoped>
+.homeBoxScroller {
+  position: relative;
+  margin-top: 50px;
+}
 .userInfo {
   padding: 0.2rem 0.5rem 0;
 }
@@ -271,5 +288,11 @@ export default {
 .conversation .van-count-down {
   color: #999;
   font-size: 0.8rem;
+}
+.select-menu {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 9999;
 }
 </style>

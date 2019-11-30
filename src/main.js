@@ -23,7 +23,7 @@ Vue.prototype.$axios = axios;
 Vue.prototype.$url = config.baseUrl;
 
 
-const noLogin = ['login', 'home', 'conversation', 'genealogy', 'article'];
+const noLogin = ['login', 'home', 'conversation', 'genealogy', 'article', 'historyToday'];
 router.beforeEach((to, from, next) => {
   if (from.name != null) {
     localStorage.setItem('routeName', from.name);

@@ -97,6 +97,19 @@ export default new Router({
 					component: resolve => require(['@/view/other/talk/index.vue'], resolve),
 					meta: {title: '话题详情'}
 				},
+				{
+					path: '/historyToday',
+					name: 'historyToday',
+					component: resolve => require(['@/view/other/historyToday/index.vue'], resolve),
+					meta: {title: '历史上的今天'}
+				},
+				{
+					path: '/huangli',
+					name: 'huangli',
+					component: resolve => require(['@/view/other/huangli/index.vue'], resolve),
+					meta: {title: '老黄历'}
+				},
+				
 			]
 		},
 		{

@@ -6,7 +6,9 @@
       @click-left="onClickLeft"
       @click-right="onClickRight"
       fixed
-    />
+    >
+      <van-icon slot="left" name="arrow-left" size="24"/>
+    </van-nav-bar>
     <div class="other-box" ref="otherBox" :style="{height: viewportHeight + 'px'}">
       <router-view :key="$route.path + $route.params.t"/>
     </div>

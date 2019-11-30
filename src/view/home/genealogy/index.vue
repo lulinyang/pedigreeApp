@@ -10,7 +10,7 @@
         :refreshText="'下拉刷新'"
         :noDataText="message"
       >
-        <div class="genealogy-list" v-for="(item, index) in list" :key="index">
+        <div class="genealogy-list" v-for="(item, index) in $store.getters.genealogyList" :key="index">
           <van-cell @click="jumpPage(`/genealogy-details/${item.id}`, item.area_surname)">
             <template slot="icon">
               <van-image
@@ -87,6 +87,7 @@ export default {
         } else {
           this.$refs.list.finishInfinite(false);
         }
+        this.$store.commit("setGenealogyList", this.list);
       });
     }
   }

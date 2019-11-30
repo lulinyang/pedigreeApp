@@ -10,49 +10,31 @@
         :immediate-check="false"
       >
         <van-cell class="weather" :center="true" :border="false">
-          <span slot="icon" class="centigrade">{{weather.tem}}</span>
-          <span slot="title">{{weather.week}}</span>
-          <van-tag slot="label" type="warning">{{weather.wea}}</van-tag>
+          <span slot="icon" class="centigrade">{{$store.getters.weather.tem}}</span>
+          <span slot="title">{{$store.getters.weather.week}}</span>
+          <template slot="label">
+            <van-tag  type="warning">{{$store.getters.weather.wea}}</van-tag>
+            <span class="tem-range">{{$store.getters.weather.tem1}}/{{$store.getters.weather.tem2}}</span>
+          </template>
+          
           <span slot="right-icon" class="right-icon">
-            <van-icon name="static/images/local.png" color="#FF976A" size="20" />
-            <span class="city_name">{{weather.city_name}}</span>
+            <van-icon name="location" size="18" color="#FF976A" class="location"/>
+            <span class="city_name">{{$store.getters.weather.city_name}}</span>
           </span>
         </van-cell>
         <van-swipe :autoplay="3000" indicator-color="white" style="height: 12rem;">
-          <van-swipe-item>
+          <van-swipe-item v-for="(item,index) in $store.getters.banners" :key="index" @click="jumpUrl(item)">
             <img
               width="100%"
               height="100%"
-              src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190726/156413350839204345.jpg"
-            />
-          </van-swipe-item>
-          <van-swipe-item>
-            <img
-              width="100%"
-              height="100%"
-              src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190726/156413350839204345.jpg"
+              :src="$url + item.imgUrl"
             />
           </van-swipe-item>
         </van-swipe>
         <van-grid :border="false">
-          <van-grid-item icon="photo-o" text="宗祠">
+          <van-grid-item icon="photo-o" :text="item.name" v-for="(item, index) in $store.getters.menus" :key="index" @click="jumpPage(item.router)">
             <template slot="icon">
-              <van-icon name="static/images/home_menu1.png" size="48" />
-            </template>
-          </van-grid-item>
-          <van-grid-item icon="photo-o" text="历史今日">
-            <template slot="icon">
-              <van-icon name="static/images/home_menu2.png" size="48" />
-            </template>
-          </van-grid-item>
-          <van-grid-item icon="photo-o" text="老黄历">
-            <template slot="icon">
-              <van-icon name="static/images/home_menu3.png" size="48" />
-            </template>
-          </van-grid-item>
-          <van-grid-item icon="photo-o" text="名人烈士">
-            <template slot="icon">
-              <van-icon name="static/images/home_menu4.png" size="48" />
+              <van-icon :name="$url + item.icon" size="48" />
             </template>
           </van-grid-item>
         </van-grid>
@@ -71,14 +53,14 @@
             <van-tab title="全部" :name="0"></van-tab>
             <van-tab
               :name="item.id"
-              v-for="(item, index) in navTabs"
+              v-for="(item, index) in $store.getters.navTabs"
               :title="item.name"
               :key="index"
             ></van-tab>
           </van-tabs>
         </van-sticky>
 
-        <div v-for="(item, index) in articles" :key="index">
+        <div v-for="(item, index) in $store.getters.articles" :key="index">
           <van-cell
             class="van-cell-article"
             :border="false"
@@ -116,7 +98,6 @@ export default {
     return {
       message: "",
       active: 0,
-      navTabs: [],
       params: {
         pageSize: 15,
         page: 1
@@ -125,48 +106,54 @@ export default {
       ArticleIds: [],
       loading: false,
       finished: false,
-      viewportHeight: document.documentElement.clientHeight - 50,
       isLoading: false,
-      weather: {}
     };
   },
-  // watch() {},
   created() {
     this.reload();
-    this.geolocation();
   },
-
   methods: {
+    jumpUrl(item) {
+      if(item.isLink*1 === 1) {
+        window.location.href= item.link;
+      }
+    },
     myFun(result){
-      console.log('result-lat', result.center.lat);
-      console.log('result-lng', result.center.lng);
       http.setPosition(result.center).then(res => {
-        this.weather = res.data.data;
-        console.log('reesss', res);
+        this.$store.commit("setWeatherAll", JSON.parse(res.data.data.content));
+        this.$store.commit("setWeather", {
+          city_name: res.data.data.city_name,
+          week: res.data.data.week,
+          wea: res.data.data.wea,
+          tem: res.data.data.tem,
+          tem1: res.data.data.tem1,
+          tem2: res.data.data.tem2,
+        });
       })
     },
     geolocation() {
-        var myCity = new BMap.LocalCity();
-        myCity.get(this.myFun); 
-        // AMap.plugin("AMap.Geolocation", function() {
-        //   var geolocation = new AMap.Geolocation({});
-        //   geolocation.getCurrentPosition();
-        //   AMap.event.addListener(geolocation, "complete", onComplete);
-        //   AMap.event.addListener(geolocation, "error", onError);
-
-        //   function onComplete(data) {
-        //     // data是具体的定位信息
-        //     window.console.log("data=>", data, data.addressComponent.district);
-        //     alert(data.addressComponent.district);
-        //   }
-
-        //   function onError(data) {
-        //     // 定位出错
-        //     window.console.log("error=>", data);
-        //     alert(data.status);
-        //   }
-        // });
-      
+        let that = this;
+        // 开启SDK辅助定位
+        var geolocation = new BMap.Geolocation();
+        geolocation.enableSDKLocation();
+        geolocation.getCurrentPosition(function(r){
+          if(this.getStatus() == BMAP_STATUS_SUCCESS){
+            http.setPosition(r.point).then(res => {
+              that.$store.commit("setWeatherAll", JSON.parse(res.data.data.content));
+              that.$store.commit("setWeather", {
+                city_name: res.data.data.city_name,
+                week: res.data.data.week,
+                wea: res.data.data.wea,
+                tem: res.data.data.tem,
+                tem1: res.data.data.tem1,
+                tem2: res.data.data.tem2,
+              });
+            })
+          }else {
+            var myCity = new BMap.LocalCity();
+            myCity.get(that.myFun);
+          }        
+        });
     },
     onRefresh() {
       this.reload();
@@ -182,9 +169,16 @@ export default {
     },
     reload(isRefresh = false) {
       http.getColumn({}).then(res => {
-        this.navTabs = res.data.data.data;
+        this.$store.commit("setNavTabs", res.data.data.data);
+      });
+      http.getBanner({}).then(res => {
+        this.$store.commit("setBanners", res.data.data);
+      });
+      http.getMenu({}).then(res => {
+        this.$store.commit("setMenus", res.data.data);
       });
       this.getArctice(isRefresh);
+      this.geolocation();
     },
     selectTabs(id) {
       window.console.log("id", id);
@@ -221,6 +215,8 @@ export default {
           this.message = "没有更多了";
           this.finished = true;
         }
+        this.$store.commit("setArticles", this.articles);
+        
       });
     }
   }
@@ -246,9 +242,13 @@ export default {
   padding: 0 0.5rem;
 }
 .city_name {
-  vertical-align: top;
+  /* margin-top: -0.1rem; */
   padding: 0.1rem;
   font-size: 1rem;
+}
+.location {
+  vertical-align: top;
+  margin-top: .2rem;
 }
 .home-page {
   /* padding-bottom: 50px; */
@@ -289,5 +289,9 @@ export default {
 }
 .van-cell-article {
   padding-bottom: 0;
+}
+.tem-range {
+  color: #fff;
+  margin-left: 10px;
 }
 </style>
