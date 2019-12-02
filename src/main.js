@@ -23,12 +23,21 @@ Vue.prototype.$axios = axios;
 Vue.prototype.$url = config.baseUrl;
 
 
-const noLogin = ['login', 'home', 'conversation', 'genealogy', 'article', 'historyToday'];
+const noLogin = ['login', 'home', 'conversation', 'genealogy', 'article', 'historyToday', 'start'];
 router.beforeEach((to, from, next) => {
   if (from.name != null) {
     localStorage.setItem('routeName', from.name);
   }
-  if(noLogin.indexOf(to.name) === -1 && !localStorage.getItem('uid')) {
+  
+  switch (to.name) {
+    case 'home': store.commit('setActive', 0); break;
+    case 'genealogy': store.commit('setActive', 1); break;
+    case 'conversation': store.commit('setActive', 2); break;
+    case 'message': store.commit('setActive', 3); break;
+    case 'my': store.commit('setActive', 4); break;
+  }
+
+  if (noLogin.indexOf(to.name) === -1 && !localStorage.getItem('uid')) {
     next('/login');
   }
   next();

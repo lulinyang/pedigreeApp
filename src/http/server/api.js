@@ -112,6 +112,22 @@ class AllServiceApi extends extendsApi {
   getHuangLi(params) {
     return this.sendPost('/api/getHuangLi', params);
   }
+  //获取宗祠列表
+  getAncestral(params) {
+    return this.sendPost('/api/getAncestral', params);
+  }
+  //获取名人烈士
+  getCelebrity(params) {
+    return this.sendPost('/api/getCelebrity', params);
+  }
+  //实名认证接口
+  realAuthentication(params) {
+    return this.sendPost('/api/realAuthentication', params);
+  }
+  //修改密码
+  modifyPwd(params) {
+    return this.sendPost('/api/modifyPwd', params);
+  }
 }
 
 export default new AllServiceApi();

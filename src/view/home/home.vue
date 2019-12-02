@@ -4,7 +4,7 @@
     <div class="home-box" ref="homeBox" :style="{height: viewportHeight + 'px'}">
       <router-view></router-view>
     </div>
-    <van-tabbar v-model="active" :border="false">
+    <van-tabbar v-model="$store.state.common.active" :border="false" >
       <van-tabbar-item v-for="(item, index) in tabbers" :key="index" :to="item.path" :class="{'van-tabbar-item-large': index === 2}">
         <img slot="icon" slot-scope="props" :src="props.active ? item.active : item.inactive" />
       </van-tabbar-item>
@@ -15,7 +15,6 @@
 export default {
   data() {
     return {
-      active: 0,
       tabbers: [
         {
           active: "static/images/home_full.png",
@@ -46,24 +45,10 @@ export default {
       viewportHeight: document.documentElement.clientHeight - 50
     };
   },
-  created() {
-    window.console.log(this.$route.name);
-    switch(this.$route.name) {
-      case 'home': this.active = 0;break;
-      case 'genealogy': this.active = 1;break;
-      case 'conversation': this.active = 2;break;
-      case 'message': this.active = 3;break;
-      case 'my': this.active = 4;break;
-    }
-  },
-  mounted() {
-  
-  }
 };
 </script>
 
 <style scoped>
-/* @import url("home"); */
 .home-box {
   height: 100%;
   width: 100%;

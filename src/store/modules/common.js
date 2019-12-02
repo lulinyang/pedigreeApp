@@ -28,6 +28,12 @@ const common = {
     huangli: state => {
 			return state.huangli;
     },
+    active: state => {
+			return state.active;
+    },
+    isStart: state => {
+			return state.isStart;
+    },
   },
   //切换页面无感刷新，缓存设置
   state: {
@@ -48,7 +54,11 @@ const common = {
     //话题列表
     conversation: [],
     //老黄历
-    huangli: {}
+    huangli: {},
+    // 首页底部导航索引
+    active: 0,
+    //是否已经展示启动页，监听返回键用
+    isStart: false
   },
   // actions: {
   // },
@@ -79,6 +89,12 @@ const common = {
     },
     setHuangli: (state, param) => {
 			state.huangli = param;
+    },
+    setActive: (state, param) => {
+			state.active = param;
+    },
+    setIsStart: (state, param) => {
+			state.isStart = param;
     },
   }
 }

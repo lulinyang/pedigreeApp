@@ -7,8 +7,14 @@ export default new Router({
 	routes: [
 		{
 			path: '/',
-			redirect: '/home'
+			redirect: '/start'
 		},
+		{
+			path: '/start',
+			name: 'start',
+			component: resolve => require(['@/view/start/index.vue'], resolve),
+		},
+		//start-up
 		{
 			path: '/index',
 			component: resolve => require(['@/view/home/home.vue'], resolve),
@@ -92,10 +98,34 @@ export default new Router({
 					meta: {title: '编辑资料'}
 				},
 				{
+					path: '/real-name',
+					name: 'real-name',
+					component: resolve => require(['@/view/other/setting/real-name.vue'], resolve),
+					meta: {title: '完善实名信息'}
+				},
+				{
+					path: '/real-success',
+					name: 'real-success',
+					component: resolve => require(['@/view/other/setting/real-success.vue'], resolve),
+					meta: {title: '认证结果'}
+				},
+				{
+					path: '/modify-pwd',
+					name: 'modify-pwd',
+					component: resolve => require(['@/view/other/setting/modify-pwd.vue'], resolve),
+					meta: {title: '修改密码'}
+				},
+				{
 					path: '/talk/:id(\\d+)',
 					name: 'talk',
 					component: resolve => require(['@/view/other/talk/index.vue'], resolve),
 					meta: {title: '话题详情'}
+				},
+				{
+					path: '/ancestralAll',
+					name: 'ancestralAll',
+					component: resolve => require(['@/view/other/ancestralAll/index.vue'], resolve),
+					meta: {title: '宗祠'}
 				},
 				{
 					path: '/historyToday',
@@ -109,7 +139,12 @@ export default new Router({
 					component: resolve => require(['@/view/other/huangli/index.vue'], resolve),
 					meta: {title: '老黄历'}
 				},
-				
+				{
+					path: '/celebrity',
+					name: 'celebrity',
+					component: resolve => require(['@/view/other/celebrity/index.vue'], resolve),
+					meta: {title: '名人烈士'}
+				},
 			]
 		},
 		{

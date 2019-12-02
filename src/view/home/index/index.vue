@@ -49,6 +49,7 @@
             title-active-color="#1989FA"
             v-model="active"
             @click="selectTabs"
+            v-if="$store.getters.navTabs.length > 0"
           >
             <van-tab title="全部" :name="0"></van-tab>
             <van-tab

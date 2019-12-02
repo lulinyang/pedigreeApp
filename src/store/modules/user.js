@@ -16,13 +16,13 @@ const user = {
 		headUrl: state => {
 			return state.headUrl;
 		},
+		userInfo: state => {
+			return state.userInfo;
+		},
 	},
 	state: {
 		uid: localStorage.getItem('uid'),
-		username: localStorage.getItem('username'),
-		name: localStorage.getItem('name'),
-		sex: localStorage.getItem('sex'),
-		headUrl: localStorage.getItem('headUrl'),
+		userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {},
 	},
 	mutations: {
 		setUid: (state, param) => {
@@ -34,14 +34,8 @@ const user = {
 			localStorage.removeItem('uid');
 		},
 		setUserInfo: (state, param) => {
-			state.username = param.username;
-			localStorage.setItem('username', param.username);
-			state.name = param.name;
-			localStorage.setItem('name', param.name);
-			state.sex = param.sex;
-			localStorage.setItem('sex', param.sex);
-			state.headUrl = param.headUrl;
-			localStorage.setItem('headUrl', param.headUrl);
+			state.userInfo = param;
+			localStorage.setItem('userInfo', JSON.stringify(param));
 		},
 	},
 

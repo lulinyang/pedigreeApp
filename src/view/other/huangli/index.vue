@@ -24,7 +24,7 @@
         <span>{{$store.getters.huangli.jishen}}</span>
       </van-cell>
     </van-cell-group>
-
+   
     <van-cell-group :border="false" title="彭祖百忌" class="cell-group-title">
       <van-cell>
         <span>{{$store.getters.huangli.baiji}}</span>

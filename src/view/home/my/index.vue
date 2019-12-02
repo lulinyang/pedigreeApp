@@ -14,15 +14,16 @@
           round
           width="4.5rem"
           height="4.5rem"
-          :src="$url + $store.getters.headUrl"
+          :src="$url + $store.getters.userInfo.headUrl"
+          @click="jumpPage('/edit-user')"
         />
       </div>
     </div>
     <div class="card-info">
-      <div class="info-name van-hairline--bottom">
-        {{$store.getters.name}}
-        <img src="static/images/woman.png" width="15px" v-if="$store.getters.sex*1 === 0">
-        <img src="static/images/man.png" width="15px" v-if="$store.getters.sex*1 === 1">
+      <div class="info-name van-hairline--bottom"  @click="jumpPage('/edit-user')">
+        {{$store.getters.userInfo.name}}
+        <img src="static/images/woman.png" width="15px" v-if="$store.getters.userInfo.sex*1 === 0">
+        <img src="static/images/man.png" width="15px" v-if="$store.getters.userInfo.sex*1 === 1">
       </div>
       <van-grid style="margin-top: .5rem;" :border="false">
         <van-grid-item text="我的话题">
@@ -43,7 +44,6 @@
       <van-cell icon="static/images/collection_full.png" title="收藏" is-link  size="large"/>
       <van-cell icon="static/images/fabulous_full.png" title="点赞" is-link  size="large"/>
       <van-cell icon="static/images/message_full.png" title="评论" is-link  size="large"/>
-      <van-cell icon="static/images/zupu.png" title="族谱" is-link  size="large"/>
       <van-cell icon="static/images/setting.png" to="/setting" title="设置" is-link  size="large"/>
     </van-cell-group>
 
@@ -58,13 +58,14 @@ export default {
     return {};
   },
   created() {
-    // console.log('this.$route.query', this.$route.query);
     this.getUserById();
   },
   methods: {
+    jumpPage(page) {
+      this.$router.push(page);
+    },
     getUserById() {
       http.getUserById({}).then(res => {
-        // window.console.log('sss', res);
         this.$store.commit('setUserInfo', res.data.data);
       });
     },
