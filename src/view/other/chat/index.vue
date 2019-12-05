@@ -1,12 +1,7 @@
 <template>
   <div class="chat-room" ref="room">
     <div class="room-box">
-      <van-nav-bar
-        class="navbar-title"
-        :title="title"
-        left-arrow
-        @click-left="onClickLeft"
-      />
+      <van-nav-bar class="navbar-title" :title="title" left-arrow @click-left="onClickLeft" />
     </div>
 
     <div class="chat-content">
@@ -28,6 +23,7 @@
 
         <van-cell :border="false">
           <van-image
+            @click="jumpPage('/card')"
             slot="right-icon"
             round
             width="3rem"
@@ -43,6 +39,7 @@
 
         <van-cell :border="false">
           <van-image
+            @click="jumpPage('/card')"
             slot="right-icon"
             round
             width="3rem"
@@ -52,8 +49,9 @@
 
           <div slot="default" class="default2">小尾巴的效果。</div>
         </van-cell>
-        <van-cell :border="false" v-for="i in 99" :key="i">
+        <van-cell :border="false" v-for="i in 9" :key="i">
           <van-image
+            @click="jumpPage('/card')"
             slot="icon"
             round
             width="3rem"
@@ -69,12 +67,19 @@
       </div>
     </div>
     <div class="footer-form">
-      <van-field v-model="value" placeholder="请输入用户名" @focus="onFocus" @blur="onBlur">
-        <template slot="right-icon">
-          <van-image width="1.8rem" class="add-img" src="/static/images/add_img.png" />
-          <van-button type="info" size="small">发送</van-button>
-        </template>
+      <van-field @focus="onFocus" @blur="onBlur">
+        <div slot="right-icon" class="right-icon-box">
+          <van-icon name="static/images/add_img.png" size="24" class="right-icon-btn" @click="isFile = !isFile"/>
+          <van-icon name="static/images/send.png" size="24" class="right-icon-btn" />
+        </div>
+        <input type="text" v-model="value" @focus="onText" placeholder="请输入用户名" slot="input" class="send-input" />
       </van-field>
+      <van-grid :border="false" style="background:#fff;" v-if="isFile">
+        <van-grid-item icon="photo-o" text="图片" style="color:#409EFF"/>
+        <van-grid-item text="文件">
+          <van-icon name="static/images/file.png" size="30" slot="icon"/>
+        </van-grid-item>
+      </van-grid>
     </div>
   </div>
 </template>
@@ -87,7 +92,8 @@ export default {
       roomHeight: document.body.clientHeight,
       title: localStorage.getItem("otherTitle")
         ? localStorage.getItem("otherTitle")
-        : ""
+        : "",
+      isFile: false
     };
   },
   created() {
@@ -107,6 +113,12 @@ export default {
     };
   },
   methods: {
+    jumpPage(page) {
+      this.$router.push(page);
+    },
+    onText() {
+      this.isFile = false;
+    },
     onFocus() {
       setTimeout(() => {
         var container = this.$refs.scrollBox;
@@ -136,16 +148,10 @@ export default {
   height: 100%;
   overflow: hidden;
   background-color: #f8f8f8;
-  /* height: 90%;
-  height: -moz-calc(100% - 100px);
-  height: -webkit-calc(100% - 100px);
-  height: calc(100% - 100px); */
-  /* overflow-y: auto; */
 }
 .room-box {
   width: 100%;
   height: 100%;
-  /* background-color: aquamarine; */
   position: relative;
 }
 .chat-content {
@@ -224,4 +230,15 @@ export default {
 .content-box .van-cell {
   background-color: #f8f8f8;
 }
+.right-icon-btn {
+  display: inline-block;
+  margin-right: 0.3rem;
+  vertical-align: middle;
+}
+.send-input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+
 </style>

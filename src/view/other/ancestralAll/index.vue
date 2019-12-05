@@ -9,7 +9,7 @@
         </van-tabs>
       </van-col>
       <van-col span="10">
-        <van-search style="padding: 5px;" placeholder="请输入宗祠名" shape="round" @search="onSearch"></van-search>
+        <van-search class="search-box" placeholder="请输入宗祠名" shape="round" @search="onSearch"></van-search>
       </van-col>
     </van-row>
     <div class="scroll-box" :style="{height: viewportHeight + 'px'}">
@@ -21,7 +21,7 @@
         :refreshText="'下拉刷新'"
         :noDataText="message"
       >
-        <div class="card-box top-card">
+        <div class="card-box top-card" @click="jumpPage('/ancestral-hall')">
           <van-cell>
             <span class="left-title">宗祠名称</span>
             <van-tag type="success" class="tag">已加入</van-tag>
@@ -35,10 +35,6 @@
           </van-cell>
           <van-cell>
             <template>
-              <van-tag color="#f2826a" size="large" class="tag">标签</van-tag>
-              <van-tag color="#f2826a" size="large" class="tag">标签</van-tag>
-              <van-tag color="#7232dd" size="large" class="tag">标签</van-tag>
-              <van-tag color="#7232dd" size="large" class="tag">标签</van-tag>
               <van-tag color="#ffe1e1" text-color="#ad0000" size="large" class="tag">标签</van-tag>
             </template>
           </van-cell>
@@ -47,27 +43,33 @@
         <div class="card-box" v-for="(item, index) in list" :key="index">
           <van-cell>
             <span class="left-title">{{item.name}}</span>
-            <span slot="right-icon" class="right-nember">4555成员</span>
+            <div slot="right-icon">
+              <span class="right-nember">4555成员</span>
+              <van-button type="primary" size="small">申请加入</van-button>
+            </div>
           </van-cell>
           <van-cell>
             <p>{{item.describe}}</p>
           </van-cell>
-          <van-cell :center="true" class="admin">
-            <template slot="title">
-              <span v-for="(adminItem, i) in item.admin" :key="i">
-                <img
-                  :src="$url + adminItem.headUrl"
-                  class="admin_headUrl"
-                  width="35px"
-                  height="35px"
-                  v-if="i < 4"
-                />
-              </span>
-            </template>
-            <span slot="right-icon" class="Administrators_span">
-              管理员
-              <van-icon name="arrow" class="Administrators_icon" />
+          <van-cell
+            :center="true"
+            class="admin"
+            @click="jumpPage('/user-list', item.name + '-管理员', item.admin)"
+          >
+            <span v-for="(adminItem, i) in item.admin" :key="i">
+              <van-image
+                round
+                class="admin_headUrl"
+                width="2rem"
+                height="2rem"
+                :src="$url + adminItem.headUrl"
+                 v-if="i < 4"
+              />
             </span>
+            <div slot="right-icon" class="Administrators_span">
+              <span class="Administrators_icon">管理员</span>
+              <van-icon name="arrow" class="Administrators_icon" />
+            </div>
           </van-cell>
         </div>
       </scroller>
@@ -95,6 +97,16 @@ export default {
     // this.getAncestral();
   },
   methods: {
+    jumpPage(page, navTitle, list) {
+      if (navTitle) {
+        localStorage.setItem("navTitle", navTitle);
+      }
+      if (list) {
+        // setMemberList
+        this.$store.commit("setMemberList", list);
+      }
+      this.$router.push(page);
+    },
     refresh() {
       this.params.page = 1;
       this.getAncestral(true);
@@ -134,7 +146,7 @@ export default {
 </script>
 <style scoped>
 .scroll-box {
-  margin-top: 50px;
+  margin-top: 40px;
   position: relative;
 }
 .card-box {
@@ -154,6 +166,7 @@ export default {
 .right-nember {
   color: #ff976a;
   font-size: 0.8rem;
+  margin-right: 0.3rem;
 }
 .tag {
   margin-right: 0.5rem;
@@ -174,5 +187,10 @@ export default {
 .admin_headUrl {
   border-radius: 50%;
   margin-right: 0.5rem;
+}
+.search-box {
+  /* border-bottom: 1px solid #f8f8f8; */
+  border-top: 1px solid #f8f8f8;
+  padding: 4.6px;
 }
 </style>

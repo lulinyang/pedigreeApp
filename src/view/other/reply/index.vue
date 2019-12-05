@@ -193,18 +193,21 @@ export default {
 
         this.$toast(res.data.stateMsg);
         const data = {
-          headUrl: this.$store.getters.headUrl,
-          name: this.$store.getters.name,
-          sex: this.$store.getters.sex,
+          headUrl: this.$store.getters.userInfo.headUrl,
+          name: this.$store.getters.userInfo.name,
+          sex: this.$store.getters.userInfo.sex,
           uid: this.$store.getters.uid,
-          username: this.$store.getters.username,
+          username: this.$store.getters.userInfo.username,
           content: this.content,
           children: []
         };
-        if (this.pid === 0) {
+        if (this.pid*1 === 0) {
           this.comment.unshift(data);
           this.$refs.reply.scrollTop = this.$refs.comment.offsetTop - 250;
         } else {
+          if(!this.item.children) {
+            this.item.children = [];
+          }
           this.item.children.push(data);
         }
 

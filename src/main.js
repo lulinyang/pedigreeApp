@@ -7,6 +7,9 @@ import store from '@/store/index'
 import Vant from 'vant';
 import 'vant/lib/index.css';
 Vue.use(Vant);
+import { ImagePreview } from "vant";
+
+Vue.use(ImagePreview);
 // Vue.use(ImagePreview);
 import VueScroller from "vue-scroller"
 Vue.use(VueScroller);

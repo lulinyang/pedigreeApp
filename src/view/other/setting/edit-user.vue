@@ -53,7 +53,9 @@
           <van-icon name="arrow" slot="right-icon" />
         </van-field>
       </div>
+      <van-field v-model="userInfo.autograph" type="text" label="个性签名" placeholder="个性签名" />
     </van-cell-group>
+    
 
     <div class="edit-btn">
       <van-button type="info" class="edit-confim" round @click="editUser">保存</van-button>
@@ -94,12 +96,6 @@ export default {
   created() {
     this.$store.getters.userInfo.sex = this.$store.getters.userInfo.sex.toString();
     this.userInfo = this.$store.getters.userInfo;
-    // this.userInfo = {
-    //   username: this.$store.getters.userInfo.username,
-    //   sex: this.$store.getters.userInfo.sex.toString(),
-    //   name: this.$store.getters.userInfo.name,
-    //   headUrl: this.$store.getters.userInfo.headUrl
-    // };
   },
   methods: {
     selectArea() {

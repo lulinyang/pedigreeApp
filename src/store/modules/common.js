@@ -34,6 +34,9 @@ const common = {
     isStart: state => {
 			return state.isStart;
     },
+    memberList: state => {
+			return state.memberList;
+    },
   },
   //切换页面无感刷新，缓存设置
   state: {
@@ -58,7 +61,9 @@ const common = {
     // 首页底部导航索引
     active: 0,
     //是否已经展示启动页，监听返回键用
-    isStart: false
+    isStart: false,
+    //成员列表
+    memberList: [],
   },
   // actions: {
   // },
@@ -95,6 +100,9 @@ const common = {
     },
     setIsStart: (state, param) => {
 			state.isStart = param;
+    },
+    setMemberList: (state, param) => {
+			state.memberList = param;
     },
   }
 }

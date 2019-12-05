@@ -4,10 +4,11 @@
       <van-cell-group title="热门评论" :border="false" v-if="comment.length > 0">
         <div v-for="(item, index) in comment" :key="index">
           <van-cell :center="true" :border="false">
-            <van-icon slot="icon" size="45" name="static/images/default_man.png" />
+            <van-image slot="icon" round width="2.5rem" height="2.5rem" :src="$url + item.headUrl" />
             <template>
               <span style="margin:0 10px 0 10px;font-size:.9rem;">{{item.name}}</span>
-              <van-icon size="12" name="static/images/man.png" />
+              <van-icon size="12" name="static/images/man.png" v-if="item.sex*1 === 1"/>
+              <van-icon size="12" name="static/images/woman.png" v-else/>
               <p class="time-text">
                 <van-count-down :time="item.timestamp" :auto-start="false">
                   <template v-slot="timeData">
@@ -17,11 +18,7 @@
                 </van-count-down>
               </p>
             </template>
-            <van-icon
-              slot="right-icon"
-              size="18"
-              name="static/images/del.png"
-            />
+            <van-icon slot="right-icon" size="18" name="static/images/del.png" />
           </van-cell>
           <div class="content" @click="replyWho(item)">{{item.content}}</div>
           <div class="opt">
@@ -76,18 +73,18 @@ export default {
       comment: [],
       placeholder: "我也来说两句",
       content: "",
-      viewportHeight: document.documentElement.clientHeight - 110,
+      viewportHeight: document.documentElement.clientHeight - 88,
       pid: 0,
       item: {}
     };
   },
   created() {
     window.console.log("this.$route.params", this.$route.params);
-    this.pid = this.$route.params.pid;
+    // this.pid = this.$route.params.pid;
     const params = {
       type: 2,
-      theme_id: this.$route.params.id,
-    }
+      theme_id: this.$route.params.id
+    };
     this.getComment(params);
   },
   methods: {
@@ -120,7 +117,7 @@ export default {
         type: 2,
         theme_id: this.$route.params.id,
         content: this.content,
-         pid: this.pid
+        pid: this.pid
       };
       if (params.content === "") {
         this.$toast("回复内容不能为空！");
@@ -131,18 +128,21 @@ export default {
 
         this.$toast(res.data.stateMsg);
         const data = {
-          headUrl: this.$store.getters.headUrl,
-          name: this.$store.getters.name,
-          sex: this.$store.getters.sex,
+          headUrl: this.$store.getters.userInfo.headUrl,
+          name: this.$store.getters.userInfo.name,
+          sex: this.$store.getters.userInfo.sex,
           uid: this.$store.getters.uid,
-          username: this.$store.getters.username,
+          username: this.$store.getters.userInfo.username,
           content: this.content,
           children: []
         };
-        if (this.pid === 0) {
+        if (this.pid * 1 === 0) {
           this.comment.unshift(data);
           this.$refs.reply.scrollTop = this.$refs.comment.offsetTop - 250;
         } else {
+          if (!this.item.children) {
+            this.item.children = [];
+          }
           this.item.children.push(data);
         }
 
@@ -169,7 +169,7 @@ export default {
 </script>
 <style scoped>
 .reply {
-  padding-bottom: 1rem;
+  /* padding-bottom: 1rem; */
   background-color: #f8f8f8;
   height: 100%;
   overflow-y: auto;

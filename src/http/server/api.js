@@ -128,6 +128,10 @@ class AllServiceApi extends extendsApi {
   modifyPwd(params) {
     return this.sendPost('/api/modifyPwd', params);
   }
+  //得到跟人信息/名片
+  findUser(params) {
+    return this.sendPost('/api/findUser', params);
+  }
 }
 
 export default new AllServiceApi();
