@@ -57,9 +57,7 @@ export default {
   height: 100%;
   overflow: hidden;
 }
-/* p {
-  margin: 0;
-} */
+
 
 body,
 div,

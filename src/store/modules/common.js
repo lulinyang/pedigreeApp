@@ -37,6 +37,12 @@ const common = {
     memberList: state => {
 			return state.memberList;
     },
+    chatList: state => {
+			return state.chatList;
+    },
+    unread_num_total: state => {
+			return state.unread_num_total;
+    },
   },
   //切换页面无感刷新，缓存设置
   state: {
@@ -64,6 +70,10 @@ const common = {
     isStart: false,
     //成员列表
     memberList: [],
+    //聊天列表
+    chatList: [],
+    //未读数
+    unread_num_total: ""
   },
   // actions: {
   // },
@@ -103,6 +113,20 @@ const common = {
     },
     setMemberList: (state, param) => {
 			state.memberList = param;
+    },
+    setChatList: (state, param) => {
+      state.chatList = param;
+      // unread_num
+      let unread_num_total = 0;
+      param.forEach(item => {
+        unread_num_total += parseInt(item.unread_num);
+      });
+      if(unread_num_total <= 0) {
+        unread_num_total = "";
+      }else if(unread_num_total > 99) {
+        unread_num_total = "99+";
+      }
+      state.unread_num_total = unread_num_total.toString();
     },
   }
 }

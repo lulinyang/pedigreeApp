@@ -17,8 +17,9 @@
     </van-cell-group>
 
     <div class="btn-box" v-if="userInfo.id != $store.getters.uid">
-      <van-button type="primary" class="btn">关注</van-button>
-      <van-button type="info" class="btn">私信</van-button>
+      <van-button type="primary" class="btn" v-if="!userInfo.isFollow" @click="follow">关注</van-button>
+      <van-button type="warning" class="btn" v-else @click="unfollow">取消关注</van-button>
+      <van-button type="info" class="btn" @click="jumpPage(`/chat/${userInfo.id}`, userInfo.name)">私信</van-button>
     </div>
   </div>
 </template>
@@ -31,11 +32,29 @@ export default {
     }
   },
   created() {
-    console.log('this.$router.params', this.$route.params);
     http.findUser({user_id: this.$route.params.id}).then(res => {
-      console.log('res', res);
       this.userInfo = res.data.data;
     });
+  },
+  methods: {
+    jumpPage(page, otherTitle) {
+      if(otherTitle) {
+        localStorage.setItem('otherTitle', otherTitle);
+      }
+      this.$router.push(page);
+    },
+    follow() {
+      http.followUser({follow_id: this.userInfo.id}).then(res => {
+        this.$toast(res.data.stateMsg);
+        this.userInfo.isFollow = true;
+      });
+    },
+    unfollow() {
+      http.removeConcerns({follow_id: this.userInfo.id}).then(res => {
+        this.$toast(res.data.stateMsg);
+        this.userInfo.isFollow = false;
+      });
+    }
   }
 }
 </script>

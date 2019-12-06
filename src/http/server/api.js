@@ -132,6 +132,22 @@ class AllServiceApi extends extendsApi {
   findUser(params) {
     return this.sendPost('/api/findUser', params);
   }
+  //关注用户
+  followUser(params) {
+    return this.sendPost('/api/followUser', params);
+  }
+  //取消关注 
+  removeConcerns(params) {
+    return this.sendPost('/api/removeConcerns', params);
+  }
+  //更改已读状态
+  updateUnread(params) {
+    return this.sendPost('/api/updateUnread', params);
+  }
+  //获取聊天内容
+  getChatRoomList(params) {
+    return this.sendPost('/api/getChatRoomList', params);
+  }
 }
 
 export default new AllServiceApi();

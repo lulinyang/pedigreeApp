@@ -1,28 +1,19 @@
 import Vue from 'vue'
 import router from './router'
-import axios from 'axios'
 import App from './App.vue'
 import config from './config'
+import websocket from './wesocket'
 import store from '@/store/index'
+import http from "@/http/server/api";
 import Vant from 'vant';
 import 'vant/lib/index.css';
 Vue.use(Vant);
-import { ImagePreview } from "vant";
-
-Vue.use(ImagePreview);
-// Vue.use(ImagePreview);
 import VueScroller from "vue-scroller"
 Vue.use(VueScroller);
 
-// import BaiduMap from 'vue-baidu-map'
-
-// Vue.use(BaiduMap, {
-//   ak: config.BaiduMapAk
-// })
-
 Vue.config.productionTip = false
 
-Vue.prototype.$axios = axios;
+Vue.prototype.$websocket = websocket;
 Vue.prototype.$url = config.baseUrl;
 
 
@@ -31,7 +22,13 @@ router.beforeEach((to, from, next) => {
   if (from.name != null) {
     localStorage.setItem('routeName', from.name);
   }
-  
+
+  if(localStorage.getItem('uid')) {
+    http.getUserById({}).then(res => {
+      store.commit('setUserInfo', res.data.data);
+    });
+  }
+
   switch (to.name) {
     case 'home': store.commit('setActive', 0); break;
     case 'genealogy': store.commit('setActive', 1); break;
@@ -39,7 +36,6 @@ router.beforeEach((to, from, next) => {
     case 'message': store.commit('setActive', 3); break;
     case 'my': store.commit('setActive', 4); break;
   }
-
   if (noLogin.indexOf(to.name) === -1 && !localStorage.getItem('uid')) {
     next('/login');
   }
