@@ -1,13 +1,13 @@
 <template>
   <div>
-    <van-cell title="单元格" label="描述信息" :center="true">
-      <van-image slot="icon" width="4rem" height="4rem" :src="$url + userInfo.headUrl" />
+    <van-cell :center="true" v-if="userInfo.id">
+      <van-image slot="icon" width="4rem" height="4rem" :src="$url + userInfo.headUrl"/>
       <div slot="title" class="info-text">
         <span class="info-name">{{userInfo.name}}</span>
         <van-icon class="info-name" name="static/images/man.png" size="12" v-if="userInfo.sex*1 === 1"/>
         <van-icon class="info-name" name="static/images/woman.png" size="12" v-else/>
       </div>
-      <span slot="label" class="info-text">+86 {{userInfo.username}}</span>
+      <span slot="label" class="info-text">+86 {{userInfo.username.replace(userInfo.username.substring(3,7), "****")}}</span>
     </van-cell>
     
     <van-cell-group style="margin-top:.5rem;">
@@ -28,7 +28,9 @@ import http from "@/http/server/api";
 export default {
   data() {
     return {
-      userInfo: {}
+      userInfo: {
+        username: ""
+      }
     }
   },
   created() {

@@ -69,7 +69,7 @@ const common = {
     //是否已经展示启动页，监听返回键用
     isStart: false,
     //成员列表
-    memberList: [],
+    memberList: JSON.parse(localStorage.getItem('memberList')),
     //聊天列表
     chatList: [],
     //未读数
@@ -112,6 +112,7 @@ const common = {
 			state.isStart = param;
     },
     setMemberList: (state, param) => {
+      localStorage.setItem('memberList', JSON.stringify(param));
 			state.memberList = param;
     },
     setChatList: (state, param) => {

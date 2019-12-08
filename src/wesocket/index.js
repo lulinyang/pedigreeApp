@@ -36,7 +36,6 @@ websocket.onmessage = function (e) {
         return item;
       });
       store.commit('setChatList', data.data);
-      // console.log('data.data', data.data);
     }
   } catch (error) {
     console.log('e.data', e.data);

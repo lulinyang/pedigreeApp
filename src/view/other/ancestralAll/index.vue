@@ -1,79 +1,150 @@
 <template>
   <div>
-    <van-row class="top-nav">
-      <van-col span="14">
-        <van-tabs v-model="active" color="#1989FA" title-active-color="#1989FA">
-          <van-tab title="推荐"></van-tab>
-          <van-tab title="最新"></van-tab>
-          <van-tab title="最热"></van-tab>
-        </van-tabs>
-      </van-col>
-      <van-col span="10">
-        <van-search class="search-box" placeholder="请输入宗祠名" shape="round" @search="onSearch"></van-search>
-      </van-col>
-    </van-row>
-    <div class="scroll-box" :style="{height: viewportHeight + 'px'}">
-      <scroller
-        style="background-color: #f8f8f8;"
-        :on-refresh="refresh"
-        :on-infinite="infinite"
-        ref="list"
-        :refreshText="'下拉刷新'"
-        :noDataText="message"
-      >
-        <div class="card-box top-card" @click="jumpPage('/ancestral-hall')">
-          <van-cell>
-            <span class="left-title">宗祠名称</span>
-            <van-tag type="success" class="tag">已加入</van-tag>
-            <span slot="right-icon" class="right-nember">4555成员</span>
-          </van-cell>
-          <van-cell>
-            <p>
-              如果遇到问题，建议保持你的 PR 足够小。保证一个 PR 只解决一个问题或只添加一个功能
-              如果遇到问题，建议保持你的 PR 足够小。保证一个 PR 只解决一个问题或只添加一个功能
-            </p>
-          </van-cell>
-          <van-cell>
-            <template>
-              <van-tag color="#ffe1e1" text-color="#ad0000" size="large" class="tag">标签</van-tag>
-            </template>
-          </van-cell>
-        </div>
-
-        <div class="card-box" v-for="(item, index) in list" :key="index">
-          <van-cell>
-            <span class="left-title">{{item.name}}</span>
-            <div slot="right-icon">
-              <span class="right-nember">4555成员</span>
-              <van-button type="primary" size="small">申请加入</van-button>
+    <div class="top-nav">
+      <van-tabs v-model="active" color="#1989FA" title-active-color="#1989FA" @change="selectTab">
+        <van-tab title="已加入">
+          <div class="my-ancestral" :style="{height: (viewportHeight-38) + 'px'}">
+            <div class="card-box" v-for="(item, index) in myAncestral" :key="index" @click.stop="jumpPage(`/ancestral-hall/${item.id}`, item.name)">
+              <van-cell>
+                <span class="left-title">{{item.name}}</span>
+                <div slot="right-icon">
+                  <span class="right-nember">{{item.member_num}}成员</span>
+                  <van-button type="warning" size="small" v-if="!item.isAdmin" @click="quitApply(item.id)">退出宗祠</van-button>
+                </div>
+              </van-cell>
+              <van-cell>
+                <p>{{item.describe}}</p>
+              </van-cell>
+              <van-cell
+                :center="true"
+                class="admin"
+                @click.stop="jumpPage('/user-list', item.name + '-管理员', item.admin)"
+              >
+                <span v-for="(adminItem, i) in item.admin" :key="i">
+                  <van-image
+                    round
+                    class="admin_headUrl"
+                    width="2rem"
+                    height="2rem"
+                    :src="$url + adminItem.headUrl"
+                    v-if="i < 4"
+                  />
+                </span>
+                <div slot="right-icon" class="Administrators_span">
+                  <span class="Administrators_icon">管理员</span>
+                  <van-icon name="arrow" class="Administrators_icon" />
+                </div>
+              </van-cell>
             </div>
-          </van-cell>
-          <van-cell>
-            <p>{{item.describe}}</p>
-          </van-cell>
-          <van-cell
-            :center="true"
-            class="admin"
-            @click="jumpPage('/user-list', item.name + '-管理员', item.admin)"
-          >
-            <span v-for="(adminItem, i) in item.admin" :key="i">
-              <van-image
-                round
-                class="admin_headUrl"
-                width="2rem"
-                height="2rem"
-                :src="$url + adminItem.headUrl"
-                 v-if="i < 4"
-              />
-            </span>
-            <div slot="right-icon" class="Administrators_span">
-              <span class="Administrators_icon">管理员</span>
-              <van-icon name="arrow" class="Administrators_icon" />
+          </div>
+        </van-tab>
+        <van-tab title="已申请">
+          <div class="my-ancestral" :style="{height: (viewportHeight-38) + 'px'}">
+            <div class="card-box" v-for="(item, index) in applyAncestral" :key="index">
+              <van-cell>
+                <span class="left-title">{{item.name}}</span>
+                <div slot="right-icon">
+                  <span class="right-nember">{{item.member_num}}成员</span>
+                  <van-button type="warning" size="small" @click="cancelApply(item.id)" >取消申请</van-button>
+                </div>
+              </van-cell>
+              <van-cell>
+                <p>{{item.describe}}</p>
+              </van-cell>
+              <van-cell
+                :center="true"
+                class="admin"
+                @click="jumpPage('/user-list', item.name, item.admin)"
+              >
+                <span v-for="(adminItem, i) in item.admin" :key="i">
+                  <van-image
+                    round
+                    class="admin_headUrl"
+                    width="2rem"
+                    height="2rem"
+                    :src="$url + adminItem.headUrl"
+                    v-if="i < 4"
+                  />
+                </span>
+                <div slot="right-icon" class="Administrators_span">
+                  <span class="Administrators_icon">管理员</span>
+                  <van-icon name="arrow" class="Administrators_icon" />
+                </div>
+              </van-cell>
             </div>
-          </van-cell>
-        </div>
-      </scroller>
+          </div>
+        </van-tab>
+        <van-tab title="未加入">
+          <div class="scroll-box" :style="{height: viewportHeight + 'px'}">
+            <scroller
+              style="background-color: #f8f8f8;"
+              :on-refresh="refresh"
+              :on-infinite="infinite"
+              ref="list"
+              :refreshText="'下拉刷新'"
+              :noDataText="message"
+            >
+              <div class="card-box" v-for="(item, index) in list" :key="index">
+                <van-cell>
+                  <span class="left-title">{{item.name}}</span>
+                  <div slot="right-icon">
+                    <span class="right-nember">{{item.member_num}}成员</span>
+                    <van-button
+                      type="primary"
+                      size="small"
+                      @click="apply(item)"
+                    >申请加入</van-button>
+                  </div>
+                </van-cell>
+                <van-cell>
+                  <p>{{item.describe}}</p>
+                </van-cell>
+                <van-cell
+                  :center="true"
+                  class="admin"
+                  @click="jumpPage('/user-list', item.name + '-管理员', item.admin)"
+                >
+                  <span v-for="(adminItem, i) in item.admin" :key="i">
+                    <van-image
+                      round
+                      class="admin_headUrl"
+                      width="2rem"
+                      height="2rem"
+                      :src="$url + adminItem.headUrl"
+                      v-if="i < 4"
+                    />
+                  </span>
+                  <div slot="right-icon" class="Administrators_span">
+                    <span class="Administrators_icon">管理员</span>
+                    <van-icon name="arrow" class="Administrators_icon" />
+                  </div>
+                </van-cell>
+              </div>
+            </scroller>
+          </div>
+        </van-tab>
+      </van-tabs>
     </div>
+
+    <van-dialog
+      v-model="show"
+      closeOnPopstate
+      showCancelButton
+      @cancel="show = false"
+      @confirm="applyActive"
+    >
+      <div class="remark-box">
+        <div class="remark-title">宗祠申请</div>
+        <van-field
+          v-model="applyParams.remark"
+          rows="3"
+          autosize
+          type="textarea"
+          placeholder="请输入备注"
+          class="input-remark"
+        />
+      </div>
+    </van-dialog>
   </div>
 </template>
 <script>
@@ -90,19 +161,99 @@ export default {
       list: [],
       listIds: [],
       viewportHeight: document.documentElement.clientHeight - 50,
-      message: "没有更多了"
+      message: "没有更多了",
+      show: false,
+      applyParams: {
+        remark: ""
+      },
+      item: {},
+      myAncestral: [],
+      applyAncestral: []
     };
   },
   created() {
-    // this.getAncestral();
+    this.getAlreadyAncestral();
+    this.getApplyAncestral();
   },
   methods: {
+    selectTab(index) {
+      console.log('index', index);
+      if(index === 0) {
+        this.getAlreadyAncestral();
+      }else if(index === 1)  {
+        this.getApplyAncestral();
+      }
+    },
+    getApplyAncestral() {
+      http.getApplyAncestral({}).then(res => {
+        this.applyAncestral = res.data.data;
+      });
+    },
+    cancelApply(id) {
+      http.cancelAncestral({ancetral_id: id}).then(res => {
+        this.$toast(res.data.stateMsg);
+        this.getApplyAncestral();
+      });
+    },
+    quitApply(id) {
+      http.cancelAncestral({ancetral_id: id}).then(res => {
+        this.$toast('您已退出宗祠');
+        this.getAlreadyAncestral();
+      });
+    },
+    getAlreadyAncestral() {
+      let uid = localStorage.getItem("uid");
+      if (uid) {
+        http.getAlreadyAncestral({}).then(res => {
+          this.myAncestral = res.data.data.map(item => {
+            if (item.administrators.split(",").indexOf(uid) !== -1) {
+              item.isAdmin = true;
+            } else {
+              item.isAdmin = false;
+            }
+            return item;
+          });
+        });
+      }
+    },
+    applyActive() {
+      http.applyAncestral(this.applyParams).then(res => {
+        this.$toast(res.data.stateMsg);
+        this.active = 1;
+      });
+    },
+    apply(item) {
+      let isAuthentication = this.$store.getters.userInfo.isAuthentication;
+      if (isAuthentication * 1 === 0) {
+        this.$router.push("/real-name");
+      } else {
+        let admin_ids = [];
+        item.admin.forEach(element => {
+          admin_ids.push(element.id);
+        });
+        this.item = item;
+        this.applyParams = {
+          admin_ids: admin_ids.toString(),
+          ancetral_id: item.id,
+          remark: ""
+        };
+        this.show = true;
+      }
+    },
     jumpPage(page, navTitle, list) {
+      let isAuthentication = this.$store.getters.userInfo.isAuthentication;
+      if (isAuthentication * 1 === 0) {
+        this.$router.push("/real-name");
+        return false;
+      }
       if (navTitle) {
         localStorage.setItem("navTitle", navTitle);
       }
       if (list) {
-        // setMemberList
+        list = list.map(item => {
+          item.role = 1;
+          return item;
+        });
         this.$store.commit("setMemberList", list);
       }
       this.$router.push(page);
@@ -146,7 +297,7 @@ export default {
 </script>
 <style scoped>
 .scroll-box {
-  margin-top: 40px;
+  /* margin-top: 40px; */
   position: relative;
 }
 .card-box {
@@ -166,7 +317,7 @@ export default {
 .right-nember {
   color: #ff976a;
   font-size: 0.8rem;
-  margin-right: 0.3rem;
+  margin-right: 0.5rem;
 }
 .tag {
   margin-right: 0.5rem;
@@ -191,6 +342,18 @@ export default {
 .search-box {
   /* border-bottom: 1px solid #f8f8f8; */
   border-top: 1px solid #f8f8f8;
-  padding: 4.6px;
+  height: 44px;
+}
+.remark-title {
+  padding: 0.8rem 0;
+  text-align: center;
+}
+.input-remark {
+  border-top: 1px solid #f8f8f8;
+  border-bottom: 1px solid #f8f8f8;
+}
+.my-ancestral {
+  overflow-y: auto;
+  /* padding-bottom: 1rem; */
 }
 </style>

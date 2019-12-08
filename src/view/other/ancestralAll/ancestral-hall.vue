@@ -2,18 +2,18 @@
   <div>
     <van-notice-bar text="文字内容多于一行时，可通过scrollable参数控制是否开启滚动" left-icon="volume-o" mode="closeable"/>
     <van-cell-group>
-      <van-cell is-link :center="true">
+      <van-cell is-link :center="true" @click="lookMembers('/user-list', ancestralInfo.members)">
         <van-image
           round
           class="member-list"
           width="2.5rem"
           height="2.5rem"
-          src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190719/156352098551333745.jpg"
-          v-for="i in 5"
-          :key="i"
+          :src="$url + item.headUrl"
+          v-for="(item, index) in ancestralInfo.members"
+          :key="index"
         />
         <span slot="right-icon">
-          <span class="right-member">136成员</span>
+          <span class="right-member">{{ancestralInfo.members.length}}成员</span>
           <van-icon class="right-member" name="arrow" />
         </span>
       </van-cell>
@@ -23,16 +23,11 @@
       <van-swipe :autoplay="3000" indicator-color="white" style="height: 180px;">
         <van-swipe-item>
           <img
-            src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190719/156352098551333745.jpg"
+            :src="$url + item"
             width="100%"
             height="100%"
-          />
-        </van-swipe-item>
-        <van-swipe-item>
-          <img
-            src="https://lulinyang.oss-cn-beijing.aliyuncs.com/20190719/156352098551333745.jpg"
-            width="100%"
-            height="100%"
+            v-for="(item, index) in ancestralInfo.banner_imgs"
+            :key="index"
           />
         </van-swipe-item>
       </van-swipe>
@@ -60,10 +55,18 @@
       </van-col>
     </van-row>-->
     <van-grid :border="false" style="margin-top:1px;">
-      <van-grid-item icon="photo-o" text="族谱" />
-      <van-grid-item icon="photo-o" text="公告" />
-      <van-grid-item icon="photo-o" text="文件" />
-      <van-grid-item icon="photo-o" text="建议" />
+      <van-grid-item text="族谱" >
+        <van-icon slot="icon" size="45" name="static/images/home_menu1.png" />
+      </van-grid-item>
+       <van-grid-item text="公告" >
+        <van-icon slot="icon" size="45" name="static/images/home_menu2.png" />
+      </van-grid-item>
+       <van-grid-item text="文件" >
+        <van-icon slot="icon" size="45" name="static/images/home_menu4.png" />
+      </van-grid-item>
+       <van-grid-item text="建议" >
+        <van-icon slot="icon" size="45" name="static/images/home_menu6.png" />
+      </van-grid-item>
     </van-grid>
     <van-tabs v-model="active">
       <van-tab title="话题">
@@ -197,7 +200,10 @@
           <van-button type="primary" class="menu-item vote" v-if="isMenu">投票</van-button>
         </transition>
         <transition name="van-fade">
-          <van-button type="primary" class="menu-item posting" v-if="isMenu">发帖</van-button>
+          <van-button type="primary" class="menu-item posting" v-if="isMenu">话题</van-button>
+        </transition>
+        <transition name="van-fade">
+          <van-button type="primary" class="menu-item talk" v-if="isMenu">发帖</van-button>
         </transition>
       </div>
     </div>
@@ -206,16 +212,37 @@
 <script>
 import Vue from "vue";
 import { ImagePreview } from "vant";
-
+import http from "@/http/server/api";
 Vue.use(ImagePreview);
 export default {
   data() {
     return {
       isMenu: false,
-      active: 0
+      active: 0,
+      ancestralInfo: {
+        members: []
+      }
     };
   },
+  created() {
+    this.getAncestralInfo(this.$route.params.id);
+  },
   methods: {
+    lookMembers(page, members) {
+      this.$store.commit("setMemberList", members);
+      this.$router.push(page);
+    },
+    getAncestralInfo(id) {
+      http.getAncestralInfo({id: id}).then(res => {
+        if(res.data.data.banners) {
+          res.data.data.banner_imgs =  res.data.data.banners.split(',');
+        }else {
+          res.data.data.banner_imgs =  [];
+        }
+        
+        this.ancestralInfo = res.data.data;
+      });
+    },
     imagePreview(imgs) {
       let imgsArray = imgs.map(item => {
         return this.$url + item;
@@ -228,8 +255,8 @@ export default {
 <style  scoped>
 .menu-group {
   position: fixed;
-  right: 1rem;
-  bottom: 3rem;
+  right: 2rem;
+  bottom: 4rem;
   width: 44px;
   height: 44px;
   background-color: #fff;
@@ -254,6 +281,11 @@ export default {
 }
 .vote {
   left: -48px;
+  top: -20px;
+}
+.talk {
+  left: -38px;
+  bottom: -80px;
 }
 .swipe-banner {
   background-color: #fff;

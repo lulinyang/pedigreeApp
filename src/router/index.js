@@ -134,10 +134,10 @@ export default new Router({
 					meta: { title: '宗祠' }
 				},
 				{
-					path: '/ancestral-hall',
+					path: '/ancestral-hall/:id',
 					name: 'ancestral-hall',
 					component: resolve => require(['@/view/other/ancestralAll/ancestral-hall.vue'], resolve),
-					meta: { title: '宗祠名称' }
+					meta: { title: '' }
 				},
 				{
 					path: '/historyToday',
@@ -161,7 +161,7 @@ export default new Router({
 					path: '/user-list',
 					name: 'user-list',
 					component: resolve => require(['@/view/other/userList/index.vue'], resolve),
-					meta: { title: '' }
+					meta: { title: '成员列表' }
 				},
 			]
 		},

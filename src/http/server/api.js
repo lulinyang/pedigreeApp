@@ -114,7 +114,7 @@ class AllServiceApi extends extendsApi {
   }
   //获取宗祠列表
   getAncestral(params) {
-    return this.sendPost('/api/getAncestral', params);
+    return this.sendPost('/api/getAncestralApp', params);
   }
   //获取名人烈士
   getCelebrity(params) {
@@ -147,6 +147,26 @@ class AllServiceApi extends extendsApi {
   //获取聊天内容
   getChatRoomList(params) {
     return this.sendPost('/api/getChatRoomList', params);
+  }
+  //申请加入宗祠
+  applyAncestral(params) {
+    return this.sendPost('/api/applyAncestral', params);
+  }
+  //取消申请
+  cancelAncestral(params) {
+    return this.sendPost('/api/cancelAncestral', params);
+  }
+  //得到已加入的宗祠
+  getAlreadyAncestral(params) {
+    return this.sendPost('/api/getAlreadyAncestral', params);
+  }
+  //获取申请中的宗祠
+  getApplyAncestral(params) {
+    return this.sendPost('/api/getApplyAncestral', params);
+  }
+  //宗祠信息
+  getAncestralInfo(params) {
+    return this.sendPost('/api/getAncestralInfo', params);
   }
 }
 
