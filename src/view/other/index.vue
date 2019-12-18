@@ -6,6 +6,7 @@
       @click-left="onClickLeft"
       @click-right="onClickRight"
       fixed
+      :z-index="99999"
     >
       <van-icon slot="left" name="arrow-left" size="24"/>
     </van-nav-bar>
@@ -17,26 +18,12 @@
 
 <script>
 export default {
-  // props: {
-  //   title: {
-  //     type: String,
-  //     default: ''
-  //   }
-  // },
   data() {
     return {
       title: localStorage.getItem('navTitle'),
       viewportHeight: document.documentElement.clientHeight - 46
     };
   },
-  created() {
-    // this.title = this.$route.meta.title
-    // window.console.log(this.$route.meta.title);
-    // this.title = this.$route.meta.title
-  },
-  // mounted() {
-  //    window.addEventListener('scroll',this.handleScroll);
-  // },
   methods: {
     onClickLeft() {
       this.$router.go(-1);

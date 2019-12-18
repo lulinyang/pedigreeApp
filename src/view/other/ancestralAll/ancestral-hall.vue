@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-notice-bar text="文字内容多于一行时，可通过scrollable参数控制是否开启滚动" left-icon="volume-o" mode="closeable"/>
+    <van-notice-bar text="文字内容多于一行时，可通过scrollable参数控制是否开启滚动" left-icon="volume-o" mode="closeable" />
     <van-cell-group>
       <van-cell is-link :center="true" @click="lookMembers('/user-list', ancestralInfo.members)">
         <van-image
@@ -18,17 +18,11 @@
         </span>
       </van-cell>
     </van-cell-group>
-    
+
     <div class="swipe-banner">
       <van-swipe :autoplay="3000" indicator-color="white" style="height: 180px;">
-        <van-swipe-item>
-          <img
-            :src="$url + item"
-            width="100%"
-            height="100%"
-            v-for="(item, index) in ancestralInfo.banner_imgs"
-            :key="index"
-          />
+        <van-swipe-item v-for="(item, index) in ancestralInfo.banner_imgs" :key="index">
+          <img :src="$url + item" width="100%" height="100%" />
         </van-swipe-item>
       </van-swipe>
     </div>
@@ -55,24 +49,24 @@
       </van-col>
     </van-row>-->
     <van-grid :border="false" style="margin-top:1px;">
-      <van-grid-item text="族谱" >
+      <van-grid-item text="族谱" @click="jumpPage('/genealogy-hall')">
         <van-icon slot="icon" size="45" name="static/images/home_menu1.png" />
       </van-grid-item>
-       <van-grid-item text="公告" >
+      <van-grid-item text="公告">
         <van-icon slot="icon" size="45" name="static/images/home_menu2.png" />
       </van-grid-item>
-       <van-grid-item text="文件" >
+      <van-grid-item text="文件">
         <van-icon slot="icon" size="45" name="static/images/home_menu4.png" />
       </van-grid-item>
-       <van-grid-item text="建议" >
+      <van-grid-item text="建议">
         <van-icon slot="icon" size="45" name="static/images/home_menu6.png" />
       </van-grid-item>
     </van-grid>
-    <van-tabs v-model="active">
+    <van-tabs v-model="active" color="#1989FA" title-active-color="#1989FA">
       <van-tab title="话题">
         <div
           class="conversation"
-          v-for="(item, index) in $store.getters.conversation"
+          v-for="(item, index) in list"
           :key="index"
           @click="jumpPage(`/talk/${item.id}`)"
         >
@@ -135,7 +129,7 @@
                     width="100%"
                     height="100%"
                     :src="$url + v"
-                    @click.stop="imagePreview(item.imgsUrl)"
+                    @click.stop="imagePreview(item.imgsUrl, k)"
                   />
                 </van-grid-item>
               </van-grid>
@@ -184,10 +178,14 @@
           </van-cell>
         </div>
       </van-tab>
-      <van-tab title="帖子"></van-tab>
-      <van-tab title="投票"></van-tab>
+      <van-tab title="投票">
+        <van-cell v-for="(item, index) in voteList" :key="index" is-link :center="true">
+          <img slot="icon" :src="$url + item.headUrl" width="45" height="45" />
+          <div slot="title" class="content-right">{{item.title}}</div>
+          <div slot="label" class="content-right">{{item.username}}</div>
+        </van-cell>
+      </van-tab>
     </van-tabs>
-    <!-- first -->
     <div class="menu-group">
       <div class="menu-position">
         <van-icon
@@ -197,14 +195,24 @@
           @click="isMenu = !isMenu"
         />
         <transition name="van-fade">
-          <van-button type="primary" class="menu-item vote" v-if="isMenu">投票</van-button>
+          <van-button
+            type="primary"
+            class="menu-item vote"
+            v-if="isMenu"
+            @click="jumpPage(`/add-vote/${ancestralInfo.id}`)"
+          >投票</van-button>
         </transition>
         <transition name="van-fade">
-          <van-button type="primary" class="menu-item posting" v-if="isMenu">话题</van-button>
+          <van-button
+            type="primary"
+            class="menu-item posting"
+            v-if="isMenu"
+            @click="jumpPage(`/words/${ancestralInfo.id}`)"
+          >话题</van-button>
         </transition>
-        <transition name="van-fade">
+        <!-- <transition name="van-fade">
           <van-button type="primary" class="menu-item talk" v-if="isMenu">发帖</van-button>
-        </transition>
+        </transition>-->
       </div>
     </div>
   </div>
@@ -221,33 +229,84 @@ export default {
       active: 0,
       ancestralInfo: {
         members: []
+      },
+      list: [],
+      listIds: [],
+      params: {
+        pageSize: 15,
+        page: 1,
+        ancestral_id: ""
+      },
+      voteList: [],
+      params2: {
+        pageSize: 15,
+        page: 1,
+        ancestral_id: ""
       }
     };
   },
   created() {
+    this.params.ancestral_id = this.$route.params.id;
+    this.params2.ancestral_id = this.$route.params.id;
     this.getAncestralInfo(this.$route.params.id);
+    this.getConversationList();
+    this.getVoteList();
   },
   methods: {
+    jumpPage(page) {
+      if (page === "/genealogy-hall") {
+        this.$store.commit("setMyGenealogy", this.ancestralInfo.genealogys);
+      }
+      this.$router.push(page);
+    },
     lookMembers(page, members) {
       this.$store.commit("setMemberList", members);
       this.$router.push(page);
     },
     getAncestralInfo(id) {
-      http.getAncestralInfo({id: id}).then(res => {
-        if(res.data.data.banners) {
-          res.data.data.banner_imgs =  res.data.data.banners.split(',');
-        }else {
-          res.data.data.banner_imgs =  [];
+      http.getAncestralInfo({ id: id }).then(res => {
+        if (res.data.data.banners) {
+          res.data.data.banner_imgs = res.data.data.banners.split(",");
+        } else {
+          res.data.data.banner_imgs = [];
         }
-        
         this.ancestralInfo = res.data.data;
       });
     },
-    imagePreview(imgs) {
+    imagePreview(imgs, index) {
       let imgsArray = imgs.map(item => {
         return this.$url + item;
       });
-      ImagePreview(imgsArray);
+      ImagePreview({
+        images: imgsArray,
+        startPosition: index
+      });
+    },
+    getConversationList() {
+      http.getConversationList(this.params).then(res => {
+        const data = res.data.data;
+        data.data.forEach(item => {
+          this.params.page = data.current_page + 1;
+          if (this.listIds.indexOf(item.id) === -1) {
+            if (item.imgs) {
+              item.imgsUrl = item.imgs.split(",");
+            } else {
+              item.imgsUrl = [];
+            }
+            let timestamp = parseInt(new Date().getTime());
+            item.timestamp =
+              timestamp - parseInt(new Date(item.created_at).getTime());
+            this.list.push(item);
+            this.listIds.push(item.id);
+          }
+        });
+      });
+    },
+    getVoteList() {
+      http.getVoteList(this.params2).then(res => {
+        // console
+        this.voteList = res.data.data.data;
+      });
     }
   }
 };
@@ -338,6 +397,12 @@ export default {
 }
 .right-member {
   vertical-align: middle;
+}
+.content-right {
+  padding-left: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
 

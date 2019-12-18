@@ -168,6 +168,22 @@ class AllServiceApi extends extendsApi {
   getAncestralInfo(params) {
     return this.sendPost('/api/getAncestralInfo', params);
   }
+  //族谱成员
+  getTreeChart(params) {
+    return this.sendPost('/api/getTreeChart', params);
+  }
+  //族谱人员简介
+  getMember(params) {
+    return this.sendPost('/api/getMember', params);
+  }
+  //投票
+  addVote(params) {
+    return this.sendPost('/api/addVote', params);
+  }
+  //获取投票列表
+  getVoteList(params) {
+    return this.sendPost('/api/getVoteList', params);
+  }
 }
 
 export default new AllServiceApi();

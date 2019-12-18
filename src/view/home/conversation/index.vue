@@ -125,7 +125,7 @@
       </div>
     </scroller>
     </div>
-    <img class="push" @click="jumpPage('/words')" src="static/images/push_full.png" />
+    <img class="push" @click="jumpPage('/words/0')" src="static/images/push_full.png" />
   </div>
 </template>
 
@@ -141,7 +141,8 @@ export default {
       message: "没有更多了",
       params: {
         pageSize: 15,
-        page: 1
+        page: 1,
+        ancestral_id: '0'
       },
       list: [],
       listIds: [],

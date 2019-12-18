@@ -2,7 +2,7 @@
   <div class="homeBox2">
     <div v-if="$store.getters.chatList.length > 0">
       <van-swipe-cell v-for="(item, index) in $store.getters.chatList" :key="index">
-        <van-cell @click="jumpPage(`/chat/${item.id}`, item.name)">
+        <van-cell @click="jumpPage(`/chat/${item.id}`, item)">
           <template slot="icon">
             <van-image round width="3.5rem" height="3.5rem" :src="$url + item.headUrl" />
           </template>
@@ -35,7 +35,11 @@
                 </van-count-down>
               </p>
               <p class="message-tips">
-                <van-tag round type="danger" v-if="item.unread_num > 0 && item.unread_num < 99">{{item.unread_num}}</van-tag>
+                <van-tag
+                  round
+                  type="danger"
+                  v-if="item.unread_num > 0 && item.unread_num < 99"
+                >{{item.unread_num}}</van-tag>
                 <van-tag round type="danger" v-if="item.unread_num > 99">99+</van-tag>
               </p>
             </div>
@@ -62,11 +66,11 @@ export default {
     console.log("this.$store.getters.chatList", this.$store.getters.chatList);
   },
   methods: {
-    jumpPage(page, title) {
-      http.updateUnread({uid: localStorage.getItem('uid')});
-      if (title !== undefined) {
-        localStorage.setItem("otherTitle", title);
-      }
+    jumpPage(page, item) {
+      http.updateUnread({
+        from_id: item.id
+      });
+      localStorage.setItem("otherTitle", item.name);
       this.$router.push(page);
     }
   }
@@ -102,7 +106,7 @@ export default {
   margin-top: 0.3rem;
 }
 .item {
-  font-size: .8rem;
+  font-size: 0.8rem;
   color: #999;
 }
 .message-tips {

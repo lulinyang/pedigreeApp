@@ -92,7 +92,6 @@ export default {
   created() {
     http
       .getChatRoomList({
-        uid: localStorage.getItem("uid"),
         from_id: this.$route.params.id
       })
       .then(res => {
@@ -207,7 +206,7 @@ export default {
         }
         this.contentList.push(data);
         setTimeout(() => {
-          http.updateUnread({ uid: localStorage.getItem("uid") });
+          http.updateUnread({ from_id: this.$route.params.id });
           var container = that.$refs.scrollBox;
           container.scrollTop = container.scrollHeight*2;
         }, 500);

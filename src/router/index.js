@@ -62,7 +62,7 @@ export default new Router({
 					meta: { title: '名片' }
 				},
 				{
-					path: '/words',
+					path: '/words/:type(\\d+)',
 					name: 'words',
 					component: resolve => require(['@/view/other/words/index.vue'], resolve),
 					meta: { title: '发布话题' }
@@ -90,6 +90,18 @@ export default new Router({
 					name: 'genealogy-details',
 					component: resolve => require(['@/view/other/genealogy/index.vue'], resolve),
 					meta: { title: '' }
+				},
+				{
+					path: '/genealogy-member/:id(\\d+)',
+					name: 'genealogy-member',
+					component: resolve => require(['@/view/other/genealogy/member.vue'], resolve),
+					meta: { title: '' }
+				},
+				{
+					path: '/member-info/:id(\\d+)',
+					name: 'member-info',
+					component: resolve => require(['@/view/other/genealogy/member-info.vue'], resolve),
+					meta: { title: '人物简介' }
 				},
 				{
 					path: '/setting',
@@ -134,10 +146,22 @@ export default new Router({
 					meta: { title: '宗祠' }
 				},
 				{
-					path: '/ancestral-hall/:id',
+					path: '/ancestral-hall/:id(\\d+)',
 					name: 'ancestral-hall',
 					component: resolve => require(['@/view/other/ancestralAll/ancestral-hall.vue'], resolve),
 					meta: { title: '' }
+				},
+				{
+					path: '/genealogy-hall',
+					name: 'genealogy-hall',
+					component: resolve => require(['@/view/other/ancestralAll/genealogy.vue'], resolve),
+					meta: { title: '宗祠族谱' }
+				},
+				{
+					path: '/add-vote/:id(\\d+)',
+					name: 'add-vote',
+					component: resolve => require(['@/view/other/vote/add-vote.vue'], resolve),
+					meta: { title: '发起投票' }
 				},
 				{
 					path: '/historyToday',

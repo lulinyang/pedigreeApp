@@ -43,6 +43,9 @@ const common = {
     unread_num_total: state => {
 			return state.unread_num_total;
     },
+    my_genealogy: state => {
+			return state.my_genealogy;
+    },
   },
   //切换页面无感刷新，缓存设置
   state: {
@@ -73,7 +76,9 @@ const common = {
     //聊天列表
     chatList: [],
     //未读数
-    unread_num_total: ""
+    unread_num_total: "",
+    //宗祠族谱
+    my_genealogy: JSON.parse(localStorage.getItem('my_genealogy')),
   },
   // actions: {
   // },
@@ -117,7 +122,6 @@ const common = {
     },
     setChatList: (state, param) => {
       state.chatList = param;
-      // unread_num
       let unread_num_total = 0;
       param.forEach(item => {
         unread_num_total += parseInt(item.unread_num);
@@ -128,6 +132,10 @@ const common = {
         unread_num_total = "99+";
       }
       state.unread_num_total = unread_num_total.toString();
+    },
+    setMyGenealogy: (state, param) => {
+      localStorage.setItem('my_genealogy', JSON.stringify(param));
+			state.my_genealogy = param;
     },
   }
 }

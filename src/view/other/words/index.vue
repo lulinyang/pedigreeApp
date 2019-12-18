@@ -37,20 +37,6 @@ export default {
   methods: {
     beforeRead(file) {
       if (!(file instanceof Array)) file = [file];
-      // const types = ["image/jpeg", "image/png", "image/gif"];
-      // const exts = ["jpeg/jpg", "png", "gif"];
-      // try {
-      //   file.forEach(item => {
-      //     if (types.indexOf(item.type) === -1) {
-      //       this.$toast(`请上传 ${exts.join("/")} 格式图片`);
-      //       return new Error("跳出循环");
-      //     }
-      //   });
-      // } catch (error) {
-      //   window.console.log("error", error);
-      //   return false;
-      // }
-
       return true;
     },
     deleteImg(file, detail) {
@@ -92,7 +78,8 @@ export default {
       }).then(res => {
         const params = {
           content: this.content,
-          imgs: res.toString()
+          imgs: res.toString(),
+          ancestral_id: this.$route.params.type
         };
         http.pushConversation(params).then(res => {
           this.$toast.clear();
