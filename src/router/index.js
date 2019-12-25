@@ -164,6 +164,12 @@ export default new Router({
 					meta: { title: '发起投票' }
 				},
 				{
+					path: '/vote-content/:id(\\d+)',
+					name: 'vote-content',
+					component: resolve => require(['@/view/other/vote/vote-content.vue'], resolve),
+					meta: { title: '投票详情' }
+				},
+				{
 					path: '/historyToday',
 					name: 'historyToday',
 					component: resolve => require(['@/view/other/historyToday/index.vue'], resolve),
@@ -186,6 +192,36 @@ export default new Router({
 					name: 'user-list',
 					component: resolve => require(['@/view/other/userList/index.vue'], resolve),
 					meta: { title: '成员列表' }
+				},
+				{
+					path: '/notice-list/:id(\\d+)',
+					name: 'notice-list',
+					component: resolve => require(['@/view/other/ancestralAll/notice-list.vue'], resolve),
+					meta: { title: '宗祠公告' }
+				},
+				{
+					path: '/proposal/:id(\\d+)',
+					name: 'proposal',
+					component: resolve => require(['@/view/other/ancestralAll/proposal.vue'], resolve),
+					meta: { title: '宗祠建议' }
+				},
+				{
+					path: '/add-proposal/:id(\\d+)',
+					name: 'add-proposal',
+					component: resolve => require(['@/view/other/ancestralAll/add-proposal.vue'], resolve),
+					meta: { title: '我要建议' }
+				},
+				{
+					path: '/file-list/:id(\\d+)',
+					name: 'file-list',
+					component: resolve => require(['@/view/other/ancestralAll/file-list.vue'], resolve),
+					meta: { title: '宗祠文件' }
+				},
+				{
+					path: '/add-file/:id(\\d+)',
+					name: 'add-file',
+					component: resolve => require(['@/view/other/ancestralAll/add-file.vue'], resolve),
+					meta: { title: '上传文件' }
 				},
 			]
 		},

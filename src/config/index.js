@@ -14,4 +14,5 @@ export default {
   apiKey: 'iSqQiR68eFhYnYQ1CwZJgCxdnUMNdqJiUcIHq4Gg',
   BaiduMapAk: 'REo68a39WKRrSk3KRs1DiTcHAOlPpTXV',
   wsUrl,
+  limit_file_size: 5 * 1024 * 1024
 }

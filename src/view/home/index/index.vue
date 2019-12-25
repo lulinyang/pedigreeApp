@@ -217,7 +217,6 @@ export default {
           this.finished = true;
         }
         this.$store.commit("setArticles", this.articles);
-        
       });
     }
   }

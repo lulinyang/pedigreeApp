@@ -184,6 +184,38 @@ class AllServiceApi extends extendsApi {
   getVoteList(params) {
     return this.sendPost('/api/getVoteList', params);
   }
+  //投票内容
+  getVoteItem(params) {
+    return this.sendPost('/api/getVoteItem', params);
+  }
+  //投票
+  activeVoteItem(params) {
+    return this.sendPost('/api/activeVoteItem', params);
+  }
+  //获取最新公告
+  getNoticeNew(params) {
+    return this.sendPost('/api/getNoticeNew', params);
+  }
+  //宗祠公告列表
+  getNoticeList(params) {
+    return this.sendPost('/api/getNoticeList', params);
+  }
+  //发布宗祠建议
+  saveProposal(params) {
+    return this.sendPost('/api/saveProposal', params);
+  }
+  //获取宗祠建议列表
+  getProposalList(params) {
+    return this.sendPost('/api/getProposalList', params);
+  }
+  //上传宗祠文件
+  // uploadAncestralFile(params) {
+  //   return this.sendPost('/api/getProposalList', params);
+  // }
+  //获取宗祠列表
+  getAncestralFileList(params) {
+    return this.sendPost('/api/getAncestralFileList', params);
+  }
 }
 
 export default new AllServiceApi();

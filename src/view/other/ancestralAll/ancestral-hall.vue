@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-notice-bar text="文字内容多于一行时，可通过scrollable参数控制是否开启滚动" left-icon="volume-o" mode="closeable" />
+    <van-notice-bar :text="notice_content" left-icon="volume-o" mode="closeable" />
     <van-cell-group>
       <van-cell is-link :center="true" @click="lookMembers('/user-list', ancestralInfo.members)">
         <van-image
@@ -52,13 +52,13 @@
       <van-grid-item text="族谱" @click="jumpPage('/genealogy-hall')">
         <van-icon slot="icon" size="45" name="static/images/home_menu1.png" />
       </van-grid-item>
-      <van-grid-item text="公告">
+      <van-grid-item text="公告" @click="jumpPage(`/notice-list/${ancestralInfo.id}`)">
         <van-icon slot="icon" size="45" name="static/images/home_menu2.png" />
       </van-grid-item>
-      <van-grid-item text="文件">
+      <van-grid-item text="文件" @click="jumpPage(`/file-list/${ancestralInfo.id}`)">
         <van-icon slot="icon" size="45" name="static/images/home_menu4.png" />
       </van-grid-item>
-      <van-grid-item text="建议">
+      <van-grid-item text="建议" @click="jumpPage(`/proposal/${ancestralInfo.id}`)">
         <van-icon slot="icon" size="45" name="static/images/home_menu6.png" />
       </van-grid-item>
     </van-grid>
@@ -179,7 +179,13 @@
         </div>
       </van-tab>
       <van-tab title="投票">
-        <van-cell v-for="(item, index) in voteList" :key="index" is-link :center="true">
+        <van-cell
+          v-for="(item, index) in voteList"
+          :key="index"
+          is-link
+          :center="true"
+          :to="`/vote-content/${item.id}`"
+        >
           <img slot="icon" :src="$url + item.headUrl" width="45" height="45" />
           <div slot="title" class="content-right">{{item.title}}</div>
           <div slot="label" class="content-right">{{item.username}}</div>
@@ -242,7 +248,9 @@ export default {
         pageSize: 15,
         page: 1,
         ancestral_id: ""
-      }
+      },
+      instance: null,
+      notice_content: ""
     };
   },
   created() {
@@ -251,6 +259,7 @@ export default {
     this.getAncestralInfo(this.$route.params.id);
     this.getConversationList();
     this.getVoteList();
+    this.getNoticeNew(this.$route.params.id);
   },
   methods: {
     jumpPage(page) {
@@ -277,7 +286,7 @@ export default {
       let imgsArray = imgs.map(item => {
         return this.$url + item;
       });
-      ImagePreview({
+      this.instance = ImagePreview({
         images: imgsArray,
         startPosition: index
       });
@@ -307,6 +316,18 @@ export default {
         // console
         this.voteList = res.data.data.data;
       });
+    },
+    getNoticeNew(id) {
+      http.getNoticeNew({ ancestral_id: id }).then(res => {
+        if(res.data.data) {
+          this.notice_content = res.data.data.content;
+        }
+      });
+    }
+  },
+  destroyed() {
+    if (this.instance) {
+      this.instance.close();
     }
   }
 };
